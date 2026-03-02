@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Alpha Centauri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f7f8fc; --white: #ffffff; --ink: #111111;
+      --mid: #6b7280; --accent: #8B83E8; --border: rgba(233,237,245,0.9);
+      --green: #8B83E8; --yellow: #FFD246; --pink: #FF4F9A; --purple: #8B83E8;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.07); --card-radius: 18px;
+      --font-d: 'Nunito', sans-serif;
+      --font-b: 'Nunito Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--white); color: var(--ink); font-family: var(--font-b); font-weight: 300; line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem; font-weight: 700; letter-spacing: 0.12em;
+      text-decoration: none; line-height: 1;
+      background: linear-gradient(135deg, #8B83E8 0%, #a89ef0 35%, #FFD246 65%, #FF4F9A 85%, #8B83E8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 1px 3px rgba(139,131,232,0.25));
+      transition: filter .25s;
+    }
+    .nav-logo:hover { filter: drop-shadow(0 1px 8px rgba(139,131,232,0.55)); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mid); text-decoration: none; transition: color .25s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding-top: 7rem;
+      background: var(--ink);
+      position: relative; overflow: hidden;
+      text-align: left;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(139,131,232,0.12) 1px, transparent 1px),
+        radial-gradient(circle, rgba(139,131,232,0.05) 1px, transparent 1px);
+      background-size: 40px 40px, 17px 17px;
+      background-position: 0 0, 20px 20px;
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; top: -200px; right: -200px;
+      width: 560px; height: 560px; border-radius: 50%;
+      border: 1px solid rgba(139,131,232,0.07);
+      pointer-events: none;
+    }
+    .hero-deco-ring {
+      position: absolute; bottom: -100px; left: -100px;
+      width: 340px; height: 340px; border-radius: 50%;
+      border: 1px solid rgba(139,131,232,0.05);
+      pointer-events: none;
+    }
+    /* Floating initials in background */
+    .hero-floats { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+    .hero-float-char {
+      position: absolute; font-family: 'Nunito', sans-serif; font-weight: 900;
+      color: rgba(139,131,232,0.06); line-height: 1; user-select: none;
+      animation: charFloat ease-in-out infinite;
+    }
+    @keyframes charFloat {
+      0%   { opacity: 0;    transform: translateY(10px) scale(0.9); }
+      20%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { opacity: 0;    transform: translateY(-40px) scale(1.05); }
+    }
+    .page-hero-inner {
+      position: relative; z-index: 2;
+      padding: 4.5rem 4rem 3rem;
+      display: flex; flex-direction: row; align-items: flex-end;
+      justify-content: space-between; gap: 3rem; flex-wrap: wrap;
+    }
+    .hero-label {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+      display: inline-block; border: 1px solid rgba(139,131,232,0.4); padding: 0.28rem 0.9rem;
+    }
+    .hero-title {
+      font-family: var(--font-d); font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 300; line-height: 1; color: var(--cream);
+      letter-spacing: -0.02em; margin-bottom: 0;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub {
+      font-size: 0.88rem; color: rgba(247,248,252,0.65);
+      line-height: 1.8; max-width: 38ch; text-align: left;
+      align-self: flex-end;
+    }
+    /* Ticker strip at bottom of hero */
+    .hero-ticker { overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(139,131,232,0.12); padding: 0.68rem 0; position: relative; z-index: 3; }
+    .hero-ticker-inner { display: inline-flex; gap: 3.5rem; animation: tickerScroll 24s linear infinite; }
+    .hero-ticker-item { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(139,131,232,0.4); display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+    .hero-ticker-item::before { content: '✦'; font-size: 0.38rem; }
+    @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ── PAGE-WIDE CONTENT ALIGNMENT ── */
+    /* All main content sections share the same 4rem horizontal padding as the hero */
+    .studio-intro,
+    .founders-section,
+    .about-footer { padding-left: 4rem; padding-right: 4rem; }
+
+    /* ── STUDIO INTRO ── */
+    .studio-intro {
+      padding: 6rem 4rem;
+      background: var(--cream);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    .intro-text .section-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .intro-text .section-title { font-family: var(--font-d); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 300; line-height: 1.1; margin-bottom: 1.5rem; }
+    .intro-text p { font-size: 0.9rem; color: var(--mid); line-height: 1.9; margin-bottom: 1rem; }
+    .intro-stats { display: flex; flex-direction: column; gap: 0; border-left: 1px solid var(--border); }
+    .stat-row {
+      padding: 1.8rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 0.3rem;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-num { font-family: var(--font-d); font-size: 3rem; font-weight: 300; color: var(--ink); line-height: 1; }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid); }
+
+    /* ── FOUNDERS SECTION ── */
+    .founders-section { padding: 6rem 4rem; background: var(--white); }
+    .founders-header { text-align: center; margin-bottom: 4.5rem; }
+    .founders-header .section-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .founders-header .section-title { font-family: var(--font-d); font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 300; line-height: 1.1; }
+    .founders-header .section-sub { margin-top: 0.8rem; font-size: 0.88rem; color: var(--mid); }
+
+    .founders-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 3rem 2.5rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    /* FOUNDER CARD */
+    .founder-card { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .avatar-wrap {
+      position: relative; width: 100%; aspect-ratio: 1;
+      cursor: pointer; margin-bottom: 1.6rem;
+    }
+    .avatar-frame {
+      position: absolute; inset: 0;
+      border: 1px solid var(--border);
+      transition: border-color .35s;
+      pointer-events: none; z-index: 2;
+    }
+    .avatar-wrap:hover .avatar-frame { border-color: var(--accent); }
+    .avatar-img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: grayscale(15%);
+      transition: filter .45s, transform .45s;
+    }
+    .avatar-wrap:hover .avatar-img { filter: grayscale(0%); transform: scale(1.03); }
+    .avatar-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--cream);
+      overflow: hidden; position: relative;
+    }
+    /* unique colour per founder */
+    .founder-card:nth-child(1) .avatar-placeholder { background: linear-gradient(140deg, #EDE0D4, #C9956A 80%); }
+    .founder-card:nth-child(2) .avatar-placeholder { background: linear-gradient(140deg, #D4DDE0, #6A9AAF 80%); }
+    .founder-card:nth-child(3) .avatar-placeholder { background: linear-gradient(140deg, #E8E0C8, #C4A23C 80%); }
+    .founder-card:nth-child(4) .avatar-placeholder { background: linear-gradient(140deg, #DFD4E8, #8A6AAF 80%); }
+
+    .avatar-initial {
+      font-family: 'Nunito', sans-serif;
+      font-size: 4.5rem; font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      line-height: 1; user-select: none;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.15);
+    }
+    .avatar-hint {
+      position: absolute; inset: 0;
+      background: rgba(26,24,20,0); display: flex; align-items: center; justify-content: center;
+      transition: background .35s; z-index: 1;
+    }
+    .avatar-wrap:hover .avatar-hint { background: rgba(17,17,17,0.22); }
+    .avatar-hint-text {
+      font-size: 0.64rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0); transition: color .35s;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    }
+    .avatar-wrap:hover .avatar-hint-text { color: rgba(255,255,255,0.9); }
+    .hint-icon {
+      width: 24px; height: 24px;
+      border: 1px solid currentColor; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hint-icon svg { width: 11px; height: 11px; fill: currentColor; }
+
+    .founder-name {
+      font-family: var(--font-d); font-size: 1.5rem; font-weight: 400;
+      letter-spacing: 0.02em; margin-bottom: 0.25rem;
+    }
+    .founder-role {
+      font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .founder-tagline {
+      margin-top: 0.7rem; font-size: 0.83rem; color: var(--mid);
+      line-height: 1.65; max-width: 24ch;
+    }
+
+    /* ── LETTER LIGHTBOX ── */
+    .letter-lightbox {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(10,10,20,0.88);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s;
+      padding: 2rem;
+    }
+    .letter-lightbox.open { opacity: 1; pointer-events: all; }
+    .letter-wrap {
+      position: relative;
+      background: var(--white);
+      max-width: 580px; width: 100%;
+      transform: translateY(18px) scale(0.97);
+      transition: transform .4s;
+    }
+    .letter-lightbox.open .letter-wrap { transform: translateY(0) scale(1); }
+
+    /* decorative top bar coloured per founder */
+    .letter-topbar {
+      height: 4px;
+      background: linear-gradient(90deg, #8B83E8, #8B83E8, #FFD246, #8B83E8);
+    }
+    .letter-topbar.moonila { background: linear-gradient(90deg, #4A7A94, #6AADCC, #9ECFE0, #6A9AAF); }
+    .letter-topbar.solar   { background: linear-gradient(90deg, #8A6A00, #C4A23C, #F0CC60, #C4A23C); }
+    .letter-topbar.eclipsa { background: linear-gradient(90deg, #5A3A7A, #8A6AAF, #BBAADD, #8A6AAF); }
+
+    .letter-inner { padding: 3rem 3.5rem 3.5rem; position: relative; }
+
+    /* watermark initial */
+    .letter-wm {
+      position: absolute; bottom: 2rem; right: 2.5rem;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 6rem; font-weight: 700; line-height: 1;
+      color: rgba(17,17,17,0.04); user-select: none; pointer-events: none;
+    }
+
+    .letter-from {
+      font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 2rem;
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .letter-from::after { content: ''; flex: 1; height: 1px; background: rgba(139,131,232,0.25); }
+
+    .letter-salutation {
+      font-family: var(--font-d); font-size: 1.5rem; font-weight: 300;
+      font-style: italic; color: var(--ink); margin-bottom: 1.2rem; line-height: 1;
+    }
+    .letter-body {
+      font-size: 0.9rem; color: var(--mid);
+      line-height: 2; margin-bottom: 2rem;
+    }
+    .letter-body p { margin-bottom: 1rem; }
+    .letter-body p:last-child { margin-bottom: 0; }
+    .letter-sign {
+      display: flex; flex-direction: column; gap: 0.1rem;
+    }
+    .letter-sign-name {
+      font-family: var(--font-d); font-size: 1.8rem; font-weight: 400;
+      font-style: italic; color: var(--ink); line-height: 1.1;
+    }
+    .letter-sign-title {
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid);
+    }
+
+    .letter-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; cursor: pointer;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      color: var(--mid); font-size: 1.1rem; transition: color .2s;
+    }
+    .letter-close:hover { color: var(--ink); }
+
+    /* ── FOOTER ── */
+    .about-footer {
+      background: var(--ink); color: var(--cream);
+      padding: 3rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem;
+      border-top: 1px solid rgba(139,131,232,0.15);
+    }
+    .about-footer-text { font-size: 0.82rem; color: rgba(247,248,252,0.65); }
+    .about-footer-links { display: flex; gap: 2rem; }
+    .about-footer-links a {
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(247,248,252,0.6); text-decoration: none; transition: color .2s;
+    }
+    .about-footer-links a:hover { color: var(--cream); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .55s, transform .55s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: .07s; }
+    .reveal-d2 { transition-delay: .14s; }
+    .reveal-d3 { transition-delay: .21s; }
+    .reveal-d4 { transition-delay: .28s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1000px) {
+      .founders-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem 2rem; }
+    }
+    @media (max-width: 900px) {
+      nav { padding: 1.1rem 1.5rem; }
+      .page-hero-inner { padding: 3.5rem 1.5rem 2.5rem; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+      .studio-intro { grid-template-columns: 1fr; padding: 4rem 1.5rem; gap: 3rem; }
+      .intro-stats { border-left: none; border-top: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; }
+      .stat-row { border-bottom: none; border-right: 1px solid var(--border); flex: 1; min-width: 120px; }
+      .founders-section { padding: 4rem 1.5rem; }
+      .letter-inner { padding: 2.2rem 2rem 2.5rem; }
+    }
+    @media (max-width: 600px) {
+      .founders-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.5rem; }
+      .avatar-initial { font-size: 3rem; }
+      .about-footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 400px) {
+      .founders-grid { grid-template-columns: 1fr; max-width: 280px; }
+    }
+  
+    /* ══ INTERN CAMP DESIGN SYSTEM ══ */
+    @keyframes popIn{from{opacity:0;transform:scale(.88) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+
+    /* Nav redesign */
+    nav { border-radius: 0 0 18px 18px; border-bottom: 2px solid var(--border); background: rgba(255,255,255,0.97); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .nav-logo { font-family: 'Nunito', sans-serif !important; font-weight: 900 !important; letter-spacing: 0.04em !important; font-size: 1.1rem !important; }
+    .nav-links a { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.78rem; border-radius: 10px; padding: 0.35rem 0.8rem; transition: all .2s; }
+    .nav-links a:hover, .nav-links a.active { background: var(--purple); color: #fff !important; }
+
+    /* Heading fonts bold */
+    .section-title, .hero-title, .hero-title-slide, .update-featured-title,
+    .feature-title, .story-title, .platform-name, .intro-title, .stat-num,
+    .port-title, .sub-tier-name, .product-title, .novel-title, .pc-title,
+    .founder-name, h1, h2, h3 {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.01em;
+    }
+    .section-label, .eyebrow, .intro-left .eyebrow, .hero-label,
+    .update-type-badge, .feature-badge, .cat-divider-label {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.12em;
+    }
+
+    /* Cards — rounded + shadow */
+    .product-card, .sub-card, .update-card, .port-card,
+    .kpi-card, .feat-card, .story-card, .novel-card, .pc-body,
+    .feature-card, .founder-card, .illus-card, .sub-card-media,
+    .social-card, .writing-block {
+      border-radius: var(--card-radius) !important;
+      box-shadow: var(--card-shadow) !important;
+      overflow: hidden;
+    }
+    .update-featured { border-radius: var(--card-radius) !important; overflow: hidden !important; }
+
+    /* Colorful card top borders (cycling green/yellow/pink/purple) */
+    .product-card:nth-child(4n+1), .sub-card:nth-child(4n+1), .port-card:nth-child(4n+1), .illus-card:nth-child(4n+1) { border-top: 3px solid var(--purple) !important; }
+    .product-card:nth-child(4n+2), .sub-card:nth-child(4n+2), .port-card:nth-child(4n+2), .illus-card:nth-child(4n+2) { border-top: 3px solid var(--yellow) !important; }
+    .product-card:nth-child(4n+3), .sub-card:nth-child(4n+3), .port-card:nth-child(4n+3), .illus-card:nth-child(4n+3) { border-top: 3px solid var(--pink) !important; }
+    .product-card:nth-child(4n+4), .sub-card:nth-child(4n+4), .port-card:nth-child(4n+4), .illus-card:nth-child(4n+4) { border-top: 3px solid var(--purple) !important; }
+
+    /* Buttons — pill/rounded */
+    .btn-primary, .product-btn, .sub-btn, .nl-btn, .pc-btn, .story-read-btn,
+    .writing-cta, .hero-explore-btn, .sub-platform-btn, .f-btn.active,
+    .filter-tab.active, .filter-pill.active {
+      border-radius: 12px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+    }
+
+    /* Filter pills/tabs */
+    .filter-tab, .filter-pill, .f-btn {
+      border-radius: 30px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 700 !important;
+    }
+
+    /* Tags */
+    .product-badge, .feature-badge, .update-type-badge, .platform-tag,
+    .story-chapter-badge, .novel-badge, .pc-type {
+      border-radius: 20px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      padding: 0.25rem 0.8rem !important;
+    }
+
+    /* Colored accent labels */
+    .section-label, .eyebrow { color: var(--purple) !important; }
+    .update-type-badge, .feat-badge, .cat-divider-label, .hero-label { color: var(--purple) !important; border-color: var(--purple) !important; }
+
+    /* Hover lift animation on cards */
+    .product-card:hover, .sub-card:hover, .port-card:hover, .story-card:hover,
+    .social-card:hover, .founder-card:hover, .illus-card:hover {
+      transform: translateY(-5px) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12) !important;
+    }
+
+    /* Section backgrounds */
+    #updates, #shop, .media-section:nth-child(even) { background: var(--white) !important; }
+    #portfolio, .studio-intro, .founders-section { background: var(--cream) !important; }
+
+    /* Social links */
+    .social-link { border-radius: 12px !important; font-family: 'Nunito', sans-serif; font-weight: 700; }
+    .social-link:hover { background: rgba(139,131,232,0.12) !important; border-color: var(--purple) !important; }
+
+    /* Footer tweaks */
+    #site-footer::before { background-image: radial-gradient(circle, rgba(139,131,232,0.12) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    #site-footer::after { border-color: rgba(139,131,232,0.12) !important; }
+    .footer-deco-ring { border-color: rgba(139,131,232,0.08) !important; }
+    .footer-nl-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-brand-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-nl-col .section-title, .footer-brand-col .section-title { color: #fff !important; }
+
+    /* Gallery overlay accent */
+    .gallery-item .gallery-overlay { background: linear-gradient(to top, rgba(17,17,17,0.9) 0%, rgba(139,131,232,0.12) 100%) !important; }
+    .overlay-expand { background: var(--purple) !important; color: #fff !important; border-radius: 50% !important; }
+
+    /* Update featured body bg */
+    .update-featured-body { background: #111111 !important; }
+
+    /* popIn animation for section cards */
+    .port-card.visible, .product-card, .sub-card, .story-card, .illus-card.visible {
+      animation: popIn 0.45s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    /* Founder cards color accents */
+    .founder-card:nth-child(1) .avatar-placeholder { background: linear-gradient(140deg, #e6f9eb, #8B83E8 80%) !important; }
+    .founder-card:nth-child(2) .avatar-placeholder { background: linear-gradient(140deg, #fff8d6, #FFD246 80%) !important; }
+    .founder-card:nth-child(3) .avatar-placeholder { background: linear-gradient(140deg, #ffe8f3, #FF4F9A 80%) !important; }
+    .founder-card:nth-child(4) .avatar-placeholder { background: linear-gradient(140deg, #eeecfd, #8B83E8 80%) !important; }
+    .avatar-initial { color: rgba(255,255,255,0.8) !important; }
+
+    /* Hero label border update */
+    .hero-label { border-color: var(--purple) !important; }
+
+    /* Page hero dot grid */
+    .page-hero::before { background-image: radial-gradient(circle, rgba(139,131,232,0.15) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    .page-hero::after, .hero-deco-ring { border-color: rgba(139,131,232,0.1) !important; }
+
+    /* Dropdown menus */
+    .dropdown-menu { background: #13131f !important; border-color: rgba(139,131,232,0.2) !important; border-radius: 14px !important; }
+    .dropdown-item:hover, .dropdown-item.active { background: rgba(139,131,232,0.15) !important; }
+    .dropdown-item.active { color: var(--purple) !important; }
+    .dropdown-badge { background: rgba(139,131,232,0.15) !important; }
+
+    /* View all links */
+    .view-all-link, .view-all { color: var(--purple) !important; font-weight: 800; }
+
+    /* Lightbox */
+    .lightbox { background: rgba(10,10,20,0.93) !important; }
+    .lb-title { font-family: 'Nunito', sans-serif !important; font-weight: 800 !important; }
+
+    /* Letter lightbox */
+    .letter-wrap { border-radius: 20px !important; }
+
+    /* Slider arrows */
+    .slider-arrow { border-radius: 12px !important; }
+    .slider-dot.active { background: var(--purple) !important; }
+
+    /* Sub note */
+    .sub-note { border-left-color: var(--purple) !important; border-radius: 0 8px 8px 0 !important; }
+
+    /* Hero explore btn */
+    .hero-explore-btn { border-radius: 12px !important; border-color: rgba(255,255,255,0.6) !important; }
+    .hero-explore-btn:hover { background: var(--purple) !important; border-color: var(--purple) !important; }
+    
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="home.html" class="nav-logo">Alpha Centauri</a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="news.html">News</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="media.html">Media</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="hero-deco-ring"></div>
+
+  <!-- Floating founder initials in background -->
+  <div class="hero-floats">
+    <div class="hero-float-char" style="left:5%;top:30%;font-size:8rem;animation-duration:14s;animation-delay:0s;">S</div>
+    <div class="hero-float-char" style="left:22%;top:55%;font-size:5rem;animation-duration:17s;animation-delay:3.5s;">M</div>
+    <div class="hero-float-char" style="right:12%;top:20%;font-size:7rem;animation-duration:12s;animation-delay:1.5s;">S</div>
+    <div class="hero-float-char" style="right:28%;top:60%;font-size:4rem;animation-duration:19s;animation-delay:6s;">E</div>
+    <div class="hero-float-char" style="left:50%;top:15%;font-size:3rem;animation-duration:22s;animation-delay:9s;">α</div>
+  </div>
+
+  <div class="page-hero-inner">
+    <div>
+      <span class="hero-label">The People Behind the Art</span>
+      <h1 class="hero-title">Meet the <em>Studio</em></h1>
+    </div>
+    <p class="hero-sub">Alpha Centauri is built by a small constellation of creators — each voice distinct, each vision essential to the whole.</p>
+  </div>
+
+  <!-- Scrolling ticker -->
+  <div class="hero-ticker">
+    <div class="hero-ticker-inner">
+      <span class="hero-ticker-item">Starila — Lead Artist</span>
+      <span class="hero-ticker-item">Moonila — Writer</span>
+      <span class="hero-ticker-item">Solar — Art Director</span>
+      <span class="hero-ticker-item">Eclipsa — Creative Strategist</span>
+      <span class="hero-ticker-item">500+ Works Created</span>
+      <span class="hero-ticker-item">3+ Years Active</span>
+      <span class="hero-ticker-item">4 Studio Members</span>
+      <span class="hero-ticker-item">Starila — Lead Artist</span>
+      <span class="hero-ticker-item">Moonila — Writer</span>
+      <span class="hero-ticker-item">Solar — Art Director</span>
+      <span class="hero-ticker-item">Eclipsa — Creative Strategist</span>
+      <span class="hero-ticker-item">500+ Works Created</span>
+      <span class="hero-ticker-item">3+ Years Active</span>
+      <span class="hero-ticker-item">4 Studio Members</span>
+    </div>
+  </div>
+</div>
+
+<!-- STUDIO INTRO -->
+<div class="studio-intro">
+  <div class="intro-text reveal">
+    <p class="section-label">Who We Are</p>
+    <h2 class="section-title">An independent studio for a very particular art.</h2>
+    <p>Alpha Centauri began as a solo pursuit and grew into a creative collective — four distinct identities, one shared language. We create fantasy spanking art through the lens of anime and manga, combining AI-assisted tools with disciplined human creative direction.</p>
+    <p>Every piece starts with a story. Every story starts with a character. And behind every character is one of us — working late, imagining worlds, refining details that most people will never consciously notice, but will certainly feel.</p>
+  </div>
+  <div class="intro-stats reveal reveal-d1">
+    <div class="stat-row">
+      <span class="stat-num">500+</span>
+      <span class="stat-label">Works Created</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-num">3+</span>
+      <span class="stat-label">Years Active</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Studio Members</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-num">10+</span>
+      <span class="stat-label">Happy Collectors</span>
+    </div>
+  </div>
+</div>
+
+<!-- FOUNDERS -->
+<section class="founders-section">
+  <div class="founders-header reveal">
+    <p class="section-label">The Founders</p>
+    <h2 class="section-title">Four Voices, One Studio</h2>
+    <p class="section-sub">Click on any portrait to receive a personal letter from each member.</p>
+  </div>
+
+  <div class="founders-grid">
+
+    <!-- STARILA -->
+    <div class="founder-card reveal">
+      <div class="avatar-wrap" data-founder="starila" onclick="openLetter('starila')">
+        <div class="avatar-frame"></div>
+        <div class="avatar-placeholder">
+          <span class="avatar-initial">S</span>
+        </div>
+        <div class="avatar-hint">
+          <div class="avatar-hint-text">
+            <div class="hint-icon">
+              <svg viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            Read Letter
+          </div>
+        </div>
+      </div>
+      <p class="founder-name">Starila</p>
+      <p class="founder-role">Founder · Lead Artist</p>
+      <p class="founder-tagline">The one who started it all. Painter of scenes, architect of scenarios.</p>
+    </div>
+
+    <!-- MOONILA -->
+    <div class="founder-card reveal reveal-d1">
+      <div class="avatar-wrap" data-founder="moonila" onclick="openLetter('moonila')">
+        <div class="avatar-frame"></div>
+        <div class="avatar-placeholder">
+          <span class="avatar-initial">M</span>
+        </div>
+        <div class="avatar-hint">
+          <div class="avatar-hint-text">
+            <div class="hint-icon">
+              <svg viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            Read Letter
+          </div>
+        </div>
+      </div>
+      <p class="founder-name">Moonila</p>
+      <p class="founder-role">Co-founder · Writer</p>
+      <p class="founder-tagline">The wordsmith. Stories, novels, and the narrative soul of the universe.</p>
+    </div>
+
+    <!-- SOLAR -->
+    <div class="founder-card reveal reveal-d2">
+      <div class="avatar-wrap" data-founder="solar" onclick="openLetter('solar')">
+        <div class="avatar-frame"></div>
+        <div class="avatar-placeholder">
+          <span class="avatar-initial">S</span>
+        </div>
+        <div class="avatar-hint">
+          <div class="avatar-hint-text">
+            <div class="hint-icon">
+              <svg viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            Read Letter
+          </div>
+        </div>
+      </div>
+      <p class="founder-name">Solar</p>
+      <p class="founder-role">Co-founder · AI Developer</p>
+      <p class="founder-tagline">The eye behind composition. Light, colour, and the warmth of every frame.</p>
+    </div>
+
+    <!-- ECLIPSA -->
+    <div class="founder-card reveal reveal-d3">
+      <div class="avatar-wrap" data-founder="eclipsa" onclick="openLetter('eclipsa')">
+        <div class="avatar-frame"></div>
+        <div class="avatar-placeholder">
+          <span class="avatar-initial">E</span>
+        </div>
+        <div class="avatar-hint">
+          <div class="avatar-hint-text">
+            <div class="hint-icon">
+              <svg viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            Read Letter
+          </div>
+        </div>
+      </div>
+      <p class="founder-name">Eclipsa</p>
+      <p class="founder-role">Co-founder · AI Engineer</p>
+      <p class="founder-tagline">The shadow side. Conceptual depth, dark themes, and strategic vision.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- LETTER LIGHTBOX -->
+<div class="letter-lightbox" id="letterLightbox" onclick="closeLetter(event)">
+  <div class="letter-wrap" id="letterWrap">
+    <button class="letter-close" onclick="closeLetter(null, true)">&#x2715;</button>
+    <div class="letter-topbar" id="letterTopbar"></div>
+    <div class="letter-inner">
+      <span class="letter-wm" id="letterWm"></span>
+      <p class="letter-from" id="letterFrom"></p>
+      <p class="letter-salutation" id="letterSalutation"></p>
+      <div class="letter-body" id="letterBody"></div>
+      <div class="letter-sign">
+        <span class="letter-sign-name" id="letterSignName"></span>
+        <span class="letter-sign-title" id="letterSignTitle"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="about-footer">
+  <p class="about-footer-text">© 2026 Alpha Centauri Studio &nbsp;·&nbsp; All content is the intellectual property of the artist.</p>
+  <div class="about-footer-links">
+    <a href="home.html">Home</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="shop.html">Shop</a>
+    <a href="media.html">Media</a>
+  </div>
+</div>
+
+<script>
+// ── FOUNDER LETTER DATA ──
+var LETTERS = {
+  starila: {
+    topbar: '',
+    wm: 'S',
+    from: 'A letter from Starila',
+    salutation: 'Dear visitor,',
+    body: [
+      'I never planned to build a studio. I planned to draw — just draw, for myself, in the quiet hours after everything else was done. But the scenes kept coming. The characters kept demanding more. And one day I looked up and realised I had made something larger than I intended.',
+      'Alpha Centauri is, at its heart, a place where a very specific kind of imagination can exist without apology. The art we make is niche, yes — but it is honest. Every brushstroke, every scenario, every character expression is the result of a real creative decision, made by a real person who cares.',
+      'Thank you for being here. Your presence — your eyes on this work — is what makes it more than a private obsession. It makes it a conversation. And I am very glad we are having it.'
+    ],
+    signName: 'Starila',
+    signTitle: 'Founder · Lead Artist'
+  },
+  moonila: {
+    topbar: 'moonila',
+    wm: 'M',
+    from: 'A letter from Moonila',
+    salutation: 'Hello, dear reader,',
+    body: [
+      'Writing has always felt like the truest form of intimacy to me. A painting shows you a moment — but a story takes you inside it. That is what I try to do: take you somewhere you have not been, into a scene that feels lived-in and real, even when it is fantastical.',
+      'My corner of Alpha Centauri is built from words. The Substack, the written fiction, the universe-building that gives the art its roots. I think of it as the soil beneath the flowers — invisible, maybe, until you look closely. But without it, nothing grows.',
+      'If you ever read one of my stories and felt a quiet thrill of recognition — that pull of "yes, exactly that" — then you have understood precisely what I was reaching for. That connection is everything to me. Thank you for reaching back.'
+    ],
+    signName: 'Moonila',
+    signTitle: 'Co-founder · Writer'
+  },
+  solar: {
+    topbar: 'solar',
+    wm: 'S',
+    from: 'A letter from Solar',
+    salutation: 'Greetings,',
+    body: [
+      'I think about light a lot. The way it falls on a shoulder. The warmth of a late-afternoon room. The difference between a scene that glows and one that merely exists. These might seem like small things — and perhaps they are — but they are the small things that make you linger.',
+      'My role in the studio is to make sure that what we produce feels alive. Not just technically competent, but luminous. Every composition is a choice about where your eye goes first, what it finds next, what feeling you carry out of the image long after you have closed the window.',
+      'I am glad the work has found its way to you. Come back often. We are always making more.'
+    ],
+    signName: 'Solar',
+    signTitle: 'Co-founder · Art Director'
+  },
+  eclipsa: {
+    topbar: 'eclipsa',
+    wm: 'E',
+    from: 'A letter from Eclipsa',
+    salutation: 'To whoever found their way here —',
+    body: [
+      'Most studios do not talk about the dark side of their work. The tension, the power dynamics, the thematic weight that makes discipline art more than just aesthetics. I do. It is, in fact, the part I find most interesting.',
+      'I joined Alpha Centauri because I believe that exploring difficult themes through art is not only valid — it is necessary. Fantasy is the safest space to examine things we would never enact. The work we make lives entirely in that space, and I am proud to help define its edges.',
+      'If you are here, you are probably someone who understands the difference between fantasy and reality, between art and action. That understanding is the foundation of everything we build. Welcome to the shadow side. I think you will find it surprisingly well-lit.'
+    ],
+    signName: 'Eclipsa',
+    signTitle: 'Co-founder · Creative Strategist'
+  }
+};
+
+// ── LIGHTBOX LOGIC ──
+var lb = document.getElementById('letterLightbox');
+
+function openLetter(key) {
+  var d = LETTERS[key];
+  if (!d) return;
+  document.getElementById('letterTopbar').className = 'letter-topbar' + (d.topbar ? ' ' + d.topbar : '');
+  document.getElementById('letterWm').textContent = d.wm;
+  document.getElementById('letterFrom').textContent = d.from;
+  document.getElementById('letterSalutation').textContent = d.salutation;
+  var bodyEl = document.getElementById('letterBody');
+  bodyEl.innerHTML = d.body.map(function(p) { return '<p>' + p + '</p>'; }).join('');
+  document.getElementById('letterSignName').textContent = d.signName;
+  document.getElementById('letterSignTitle').textContent = d.signTitle;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLetter(e, force) {
+  if (force || (e && e.target === lb)) {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLetter(null, true);
+});
+
+// ── SCROLL REVEAL ──
+var revealEls = document.querySelectorAll('.reveal');
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06 });
+revealEls.forEach(function(el) { obs.observe(el); });
+</script>
+</body>
+</html>

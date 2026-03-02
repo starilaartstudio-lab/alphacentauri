@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Media — Alpha Centauri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f7f8fc; --white: #ffffff; --ink: #111111;
+      --mid: #6b7280; --accent: #8B83E8; --border: rgba(233,237,245,0.9);
+      --green: #8B83E8; --yellow: #FFD246; --pink: #FF4F9A; --purple: #8B83E8;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.07); --card-radius: 18px;
+      --font-d: 'Nunito', sans-serif;
+      --font-b: 'Nunito Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--white); color: var(--ink); font-family: var(--font-b); font-weight: 300; line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem; font-weight: 700; letter-spacing: 0.12em;
+      text-decoration: none; line-height: 1;
+      background: linear-gradient(135deg, #8B83E8 0%, #a89ef0 35%, #FFD246 65%, #FF4F9A 85%, #8B83E8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 1px 3px rgba(139,131,232,0.25));
+      transition: filter .25s;
+    }
+    .nav-logo:hover { filter: drop-shadow(0 1px 8px rgba(139,131,232,0.55)); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mid); text-decoration: none; transition: color .25s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding-top: 7rem;
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(139,131,232,0.12) 1px, transparent 1px),
+        radial-gradient(circle, rgba(139,131,232,0.05) 1px, transparent 1px);
+      background-size: 40px 40px, 17px 17px;
+      background-position: 0 0, 20px 20px;
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; top: -200px; right: -200px;
+      width: 560px; height: 560px; border-radius: 50%;
+      border: 1px solid rgba(139,131,232,0.08);
+      pointer-events: none;
+    }
+    .hero-deco-ring {
+      position: absolute; bottom: -100px; left: -100px;
+      width: 340px; height: 340px; border-radius: 50%;
+      border: 1px solid rgba(139,131,232,0.05);
+      pointer-events: none;
+    }
+    .page-hero-inner {
+      position: relative; z-index: 2;
+      padding: 5rem 4rem 6rem;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0;
+    }
+    .hero-label {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+      display: inline-block; border: 1px solid rgba(139,131,232,0.4); padding: 0.28rem 0.9rem;
+    }
+    .hero-title {
+      font-family: var(--font-d); font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 300; line-height: 1; color: var(--cream);
+      letter-spacing: -0.02em;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub {
+      margin-top: 1.5rem; font-size: 0.92rem; color: rgba(247,248,252,0.75);
+      line-height: 1.8; max-width: 42ch; text-align: center;
+    }
+    /* placeholder */
+
+    /* ── HERO ENHANCEMENTS ── */
+    /* Floating background icons */
+    .hero-floats { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+    .hero-float  { position: absolute; opacity: 0; animation: hfloat ease-in-out infinite; }
+    .hero-float svg { fill: var(--accent); }
+    @keyframes hfloat {
+      0%   { opacity: 0;    transform: translateY(30px)  rotate(-8deg)  scale(0.85); }
+      18%  { opacity: 0.08; }
+      80%  { opacity: 0.07; }
+      100% { opacity: 0;    transform: translateY(-70px) rotate(12deg)  scale(1.1);  }
+    }
+
+    /* Ticker strip */
+    .hero-ticker { overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(139,131,232,0.12); padding: 0.72rem 0; position: relative; z-index: 3; }
+    .hero-ticker-inner { display: inline-flex; gap: 3.5rem; animation: tickerScroll 26s linear infinite; }
+    .hero-ticker-item { font-size: 0.6rem; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(139,131,232,0.45); display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+    .hero-ticker-item::before { content: '✦'; font-size: 0.38rem; }
+    @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* Platform stat row */
+    .hero-stats-row { display: flex; align-items: stretch; border: 1px solid rgba(139,131,232,0.14); margin-top: 3.5rem; position: relative; z-index: 3; }
+    .hero-stat-item { padding: 1.3rem 2.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; border-right: 1px solid rgba(139,131,232,0.12); flex: 1; }
+    .hero-stat-item:last-child { border-right: none; }
+    .hero-stat-num { font-family: var(--font-d); font-size: 1.65rem; font-weight: 800; color: var(--cream); line-height: 1; }
+    .hero-stat-label { font-size: 0.56rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(247,248,252,0.38); }
+
+    /* Inner page-hero padding update */
+    .page-hero-inner { padding: 4.5rem 4rem 3.5rem !important; }
+
+    /* CATEGORY DIVIDER */
+    .cat-divider {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-bottom: 2.2rem;
+    }
+    .cat-divider-line { flex: 1; height: 1px; background: var(--border); }
+    .cat-divider-label {
+      font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); white-space: nowrap;
+    }
+
+    /* SECTIONS */
+    .media-section { padding: 5rem 4rem; }
+    .media-section:nth-child(even) { background: var(--cream); }
+    .section-meta { margin-bottom: 3rem; }
+    .section-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .section-title { font-family: var(--font-d); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 300; line-height: 1.1; }
+    .section-desc { margin-top: 0.8rem; font-size: 0.88rem; color: var(--mid); max-width: 48ch; line-height: 1.8; }
+
+    /* SUBSCRIPTION CARDS — large featured layout */
+    .sub-cards-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+    }
+    .sub-card-media {
+      background: var(--ink); color: var(--cream);
+      padding: 2.8rem 3rem;
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+      min-height: 280px;
+      position: relative; overflow: hidden;
+      text-decoration: none;
+      transition: background .3s;
+    }
+    .sub-card-media::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent 60%, rgba(139,131,232,0.06) 100%);
+      pointer-events: none;
+    }
+    .sub-card-media.ko-fi-card { background: var(--cream); color: var(--ink); border: 1px solid var(--border); }
+    .sub-card-media.ko-fi-card .platform-name,
+    .sub-card-media.ko-fi-card .platform-desc { color: var(--ink); }
+    .sub-card-media.ko-fi-card .platform-desc { color: var(--mid); }
+    .sub-card-media.ko-fi-card .visit-link { color: var(--ink); border-color: var(--ink); }
+    .sub-card-media.ko-fi-card .visit-link:hover { background: var(--ink); color: var(--white); }
+    .sub-card-media.ko-fi-card .card-icon svg { fill: var(--ink); }
+    .sub-card-media.ko-fi-card:hover { background: var(--white); border-color: var(--accent); }
+    .sub-card-media:hover:not(.ko-fi-card) { background: #0d1117; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-icon { width: 40px; height: 40px; opacity: 0.7; }
+    .card-icon svg { width: 100%; height: 100%; fill: var(--accent); }
+    .platform-tag {
+      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+      border: 1px solid rgba(139,131,232,0.35); color: var(--accent);
+      padding: 0.22rem 0.7rem;
+    }
+    .card-bottom { }
+    .platform-name {
+      font-family: var(--font-d); font-size: 1.7rem; font-weight: 300;
+      color: var(--cream); margin-bottom: 0.5rem; line-height: 1;
+    }
+    .platform-desc {
+      font-size: 0.83rem; color: rgba(247,248,252,0.5);
+      line-height: 1.7; margin-bottom: 1.4rem; max-width: 36ch;
+    }
+    .visit-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--cream); border-bottom: 1px solid rgba(255,255,255,0.3);
+      text-decoration: none; padding-bottom: 2px;
+      transition: border-color .2s, color .2s;
+    }
+    .visit-link:hover { border-color: var(--accent); color: var(--accent); }
+    .visit-link svg { width: 10px; height: 10px; fill: currentColor; }
+
+    /* SOCIAL LINKS — horizontal scroll strip */
+    .social-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .social-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 2rem 2rem 1.8rem;
+      text-decoration: none; color: var(--ink);
+      display: flex; flex-direction: column; gap: 1.2rem;
+      transition: border-color .25s, transform .25s, background .25s;
+      position: relative;
+    }
+    .social-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      background: var(--white);
+      z-index: 2;
+    }
+    .social-card.coming {
+      opacity: 0.45; pointer-events: none;
+    }
+    .social-card-icon {
+      width: 32px; height: 32px;
+    }
+    .social-card-icon svg {
+      width: 100%; height: 100%; fill: var(--ink);
+    }
+    .social-card-name {
+      font-family: var(--font-d); font-size: 1.15rem; font-weight: 400;
+      line-height: 1;
+    }
+    .social-card-desc {
+      font-size: 0.8rem; color: var(--mid); line-height: 1.65;
+      flex: 1;
+    }
+    .social-card-action {
+      font-size: 0.66rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); display: flex; align-items: center; gap: 0.4rem;
+    }
+    .social-card-action svg { width: 9px; height: 9px; fill: currentColor; }
+    .coming-badge {
+      position: absolute; top: 1rem; right: 1rem;
+      font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase;
+      background: var(--ink); color: var(--cream);
+      padding: 0.18rem 0.6rem;
+    }
+
+    /* WRITING PLATFORM — full-width editorial */
+    .writing-block {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border);
+    }
+    .writing-visual {
+      background: var(--ink);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem;
+      position: relative; overflow: hidden;
+    }
+    .writing-visual::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(139,131,232,0.1) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+    }
+    .writing-visual-quote {
+      position: relative; z-index: 2;
+      font-family: var(--font-d); font-size: 2.8rem; font-weight: 300;
+      color: rgba(139,131,232,0.45); line-height: 1;
+      letter-spacing: -0.02em; margin-bottom: 2rem;
+    }
+    .writing-visual-label {
+      font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(139,131,232,0.75);
+    }
+    .writing-info {
+      padding: 4rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .writing-info .platform-name { font-size: 2rem; color: var(--ink); }
+    .writing-info .platform-desc { color: var(--mid); margin-bottom: 2rem; max-width: none; }
+    .writing-cta {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.85rem 2rem;
+      background: var(--ink); color: var(--white);
+      font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
+      text-decoration: none; transition: background .25s; width: fit-content;
+    }
+    .writing-cta:hover { background: var(--accent); }
+    .writing-cta svg { width: 10px; height: 10px; fill: currentColor; }
+
+    /* FOOTER */
+    .media-footer {
+      background: var(--ink); color: var(--cream);
+      padding: 3rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem;
+      border-top: 1px solid rgba(139,131,232,0.15);
+    }
+    .media-footer-text {
+      font-size: 0.82rem; color: rgba(247,248,252,0.65);
+    }
+    .media-footer-links { display: flex; gap: 2rem; }
+    .media-footer-links a {
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(247,248,252,0.6); text-decoration: none; transition: color .2s;
+    }
+    .media-footer-links a:hover { color: var(--cream); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1.1rem 1.5rem; }
+      .page-hero-inner { padding: 4rem 2rem 5rem; }
+      .media-section { padding: 4rem 2rem; }
+      .sub-cards-grid { grid-template-columns: 1fr; }
+      .social-strip { grid-template-columns: repeat(2, 1fr); }
+      .writing-block { grid-template-columns: 1fr; }
+      .writing-visual { padding: 3rem 2rem; min-height: 200px; }
+      .writing-info { padding: 2.5rem 2rem; }
+    }
+    @media (max-width: 600px) {
+      .social-strip { grid-template-columns: 1fr; }
+      .media-footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+    }
+
+    /* SCROLL REVEAL */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .55s, transform .55s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .08s; }
+    .reveal-delay-2 { transition-delay: .16s; }
+    .reveal-delay-3 { transition-delay: .24s; }
+    .reveal-delay-4 { transition-delay: .32s; }
+  
+    /* ══ INTERN CAMP DESIGN SYSTEM ══ */
+    @keyframes popIn{from{opacity:0;transform:scale(.88) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+
+    /* Nav redesign */
+    nav { border-radius: 0 0 18px 18px; border-bottom: 2px solid var(--border); background: rgba(255,255,255,0.97); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .nav-logo { font-family: 'Nunito', sans-serif !important; font-weight: 900 !important; letter-spacing: 0.04em !important; font-size: 1.1rem !important; }
+    .nav-links a { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.78rem; border-radius: 10px; padding: 0.35rem 0.8rem; transition: all .2s; }
+    .nav-links a:hover, .nav-links a.active { background: var(--purple); color: #fff !important; }
+
+    /* Heading fonts bold */
+    .section-title, .hero-title, .hero-title-slide, .update-featured-title,
+    .feature-title, .story-title, .platform-name, .intro-title, .stat-num,
+    .port-title, .sub-tier-name, .product-title, .novel-title, .pc-title,
+    .founder-name, h1, h2, h3 {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.01em;
+    }
+    .section-label, .eyebrow, .intro-left .eyebrow, .hero-label,
+    .update-type-badge, .feature-badge, .cat-divider-label {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.12em;
+    }
+
+    /* Cards — rounded + shadow */
+    .product-card, .sub-card, .update-card, .port-card,
+    .kpi-card, .feat-card, .story-card, .novel-card, .pc-body,
+    .feature-card, .founder-card, .illus-card, .sub-card-media,
+    .social-card, .writing-block {
+      border-radius: var(--card-radius) !important;
+      box-shadow: var(--card-shadow) !important;
+      overflow: hidden;
+    }
+    .update-featured { border-radius: var(--card-radius) !important; overflow: hidden !important; }
+
+    /* Colorful card top borders (cycling green/yellow/pink/purple) */
+    .product-card:nth-child(4n+1), .sub-card:nth-child(4n+1), .port-card:nth-child(4n+1), .illus-card:nth-child(4n+1) { border-top: 3px solid var(--purple) !important; }
+    .product-card:nth-child(4n+2), .sub-card:nth-child(4n+2), .port-card:nth-child(4n+2), .illus-card:nth-child(4n+2) { border-top: 3px solid var(--yellow) !important; }
+    .product-card:nth-child(4n+3), .sub-card:nth-child(4n+3), .port-card:nth-child(4n+3), .illus-card:nth-child(4n+3) { border-top: 3px solid var(--pink) !important; }
+    .product-card:nth-child(4n+4), .sub-card:nth-child(4n+4), .port-card:nth-child(4n+4), .illus-card:nth-child(4n+4) { border-top: 3px solid var(--purple) !important; }
+
+    /* Buttons — pill/rounded */
+    .btn-primary, .product-btn, .sub-btn, .nl-btn, .pc-btn, .story-read-btn,
+    .writing-cta, .hero-explore-btn, .sub-platform-btn, .f-btn.active,
+    .filter-tab.active, .filter-pill.active {
+      border-radius: 12px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+    }
+
+    /* Filter pills/tabs */
+    .filter-tab, .filter-pill, .f-btn {
+      border-radius: 30px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 700 !important;
+    }
+
+    /* Tags */
+    .product-badge, .feature-badge, .update-type-badge, .platform-tag,
+    .story-chapter-badge, .novel-badge, .pc-type {
+      border-radius: 20px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      padding: 0.25rem 0.8rem !important;
+    }
+
+    /* Colored accent labels */
+    .section-label, .eyebrow { color: var(--purple) !important; }
+    .update-type-badge, .feat-badge, .cat-divider-label, .hero-label { color: var(--purple) !important; border-color: var(--purple) !important; }
+
+    /* Hover lift animation on cards */
+    .product-card:hover, .sub-card:hover, .port-card:hover, .story-card:hover,
+    .social-card:hover, .founder-card:hover, .illus-card:hover {
+      transform: translateY(-5px) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12) !important;
+    }
+
+    /* Section backgrounds */
+    #updates, #shop, .media-section:nth-child(even) { background: var(--white) !important; }
+    #portfolio, .studio-intro, .founders-section { background: var(--cream) !important; }
+
+    /* Social links */
+    .social-link { border-radius: 12px !important; font-family: 'Nunito', sans-serif; font-weight: 700; }
+    .social-link:hover { background: rgba(139,131,232,0.12) !important; border-color: var(--purple) !important; }
+
+    /* Footer tweaks */
+    #site-footer::before { background-image: radial-gradient(circle, rgba(139,131,232,0.12) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    #site-footer::after { border-color: rgba(139,131,232,0.12) !important; }
+    .footer-deco-ring { border-color: rgba(139,131,232,0.08) !important; }
+    .footer-nl-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-brand-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-nl-col .section-title, .footer-brand-col .section-title { color: #fff !important; }
+
+    /* Gallery overlay accent */
+    .gallery-item .gallery-overlay { background: linear-gradient(to top, rgba(17,17,17,0.9) 0%, rgba(139,131,232,0.12) 100%) !important; }
+    .overlay-expand { background: var(--purple) !important; color: #fff !important; border-radius: 50% !important; }
+
+    /* Update featured body bg */
+    .update-featured-body { background: #111111 !important; }
+
+    /* popIn animation for section cards */
+    .port-card.visible, .product-card, .sub-card, .story-card, .illus-card.visible {
+      animation: popIn 0.45s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    /* Founder cards color accents */
+    .founder-card:nth-child(1) .avatar-placeholder { background: linear-gradient(140deg, #e6f9eb, #8B83E8 80%) !important; }
+    .founder-card:nth-child(2) .avatar-placeholder { background: linear-gradient(140deg, #fff8d6, #FFD246 80%) !important; }
+    .founder-card:nth-child(3) .avatar-placeholder { background: linear-gradient(140deg, #ffe8f3, #FF4F9A 80%) !important; }
+    .founder-card:nth-child(4) .avatar-placeholder { background: linear-gradient(140deg, #eeecfd, #8B83E8 80%) !important; }
+    .avatar-initial { color: rgba(255,255,255,0.8) !important; }
+
+    /* Hero label border update */
+    .hero-label { border-color: var(--purple) !important; }
+
+    /* Page hero dot grid */
+    .page-hero::before { background-image: radial-gradient(circle, rgba(139,131,232,0.15) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    .page-hero::after, .hero-deco-ring { border-color: rgba(139,131,232,0.1) !important; }
+
+    /* Dropdown menus */
+    .dropdown-menu { background: #13131f !important; border-color: rgba(139,131,232,0.2) !important; border-radius: 14px !important; }
+    .dropdown-item:hover, .dropdown-item.active { background: rgba(139,131,232,0.15) !important; }
+    .dropdown-item.active { color: var(--purple) !important; }
+    .dropdown-badge { background: rgba(139,131,232,0.15) !important; }
+
+    /* View all links */
+    .view-all-link, .view-all { color: var(--purple) !important; font-weight: 800; }
+
+    /* Lightbox */
+    .lightbox { background: rgba(10,10,20,0.93) !important; }
+    .lb-title { font-family: 'Nunito', sans-serif !important; font-weight: 800 !important; }
+
+    /* Letter lightbox */
+    .letter-wrap { border-radius: 20px !important; }
+
+    /* Slider arrows */
+    .slider-arrow { border-radius: 12px !important; }
+    .slider-dot.active { background: var(--purple) !important; }
+
+    /* Sub note */
+    .sub-note { border-left-color: var(--purple) !important; border-radius: 0 8px 8px 0 !important; }
+
+    /* Hero explore btn */
+    .hero-explore-btn { border-radius: 12px !important; border-color: rgba(255,255,255,0.6) !important; }
+    .hero-explore-btn:hover { background: var(--purple) !important; border-color: var(--purple) !important; }
+    
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="home.html" class="nav-logo">Alpha Centauri</a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="news.html">News</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="media.html" class="active">Media</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="hero-deco-ring"></div>
+
+  <!-- Floating background platform icons -->
+  <div class="hero-floats">
+    <div class="hero-float" style="left:7%;top:30%;width:64px;height:64px;animation-duration:11s;animation-delay:0s;">
+      <svg viewBox="0 0 24 24" width="64" height="64"><path d="M14.82 2.41c3.96 0 7.18 3.24 7.18 7.21 0 3.96-3.22 7.18-7.18 7.18-3.97 0-7.2-3.22-7.2-7.18 0-3.97 3.23-7.21 7.2-7.21M2 21.6h3.5V2.41H2V21.6z"/></svg>
+    </div>
+    <div class="hero-float" style="left:18%;top:55%;width:44px;height:44px;animation-duration:14s;animation-delay:3s;">
+      <svg viewBox="0 0 24 24" width="44" height="44"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.259 5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </div>
+    <div class="hero-float" style="right:10%;top:25%;width:56px;height:56px;animation-duration:13s;animation-delay:1.5s;">
+      <svg viewBox="0 0 24 24" width="56" height="56"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
+    </div>
+    <div class="hero-float" style="right:22%;top:60%;width:40px;height:40px;animation-duration:16s;animation-delay:5s;">
+      <svg viewBox="0 0 24 24" width="40" height="40"><path d="M21 4H3a1 1 0 00-1 1v14a1 1 0 001 1h18a1 1 0 001-1V5a1 1 0 00-1-1zm-1 14H4V6h16v12zM8 11h8v2H8z"/></svg>
+    </div>
+    <div class="hero-float" style="left:50%;top:20%;width:36px;height:36px;animation-duration:18s;animation-delay:7s;">
+      <svg viewBox="0 0 24 24" width="36" height="36"><path d="M4.935 0A4.924 4.924 0 000 4.935v14.13A4.924 4.924 0 004.935 24h14.13A4.924 4.924 0 0024 19.065V4.935A4.924 4.924 0 0019.065 0zm7.81 4.547c2.181 0 4.058.676 5.399 1.847a6.24 6.24 0 012.116 4.43c.012.28.012.558-.004.838-.23 4.152-3.346 6.89-7.658 6.89H9.623v3.86H7.19V4.547zm-.88 2.327H9.623v9.35h2.218c2.905 0 5.235-1.755 5.4-4.732.007-.175.007-.351.001-.527-.16-3.009-2.427-4.091-5.378-4.091z"/></svg>
+    </div>
+  </div>
+
+  <div class="page-hero-inner">
+    <div>
+      <span class="hero-label">Find Me Online</span>
+      <h1 class="hero-title">All <em>Platforms</em><br>in One Place</h1>
+      <p class="hero-sub">Follow, subscribe, and support the studio across every platform where new artworks, comics, and stories are released.</p>
+    </div>
+    <!-- Platform count stats -->
+    <div class="hero-stats-row">
+      <div class="hero-stat-item"><span class="hero-stat-num">3</span><span class="hero-stat-label">Subscription Platforms</span></div>
+      <div class="hero-stat-item"><span class="hero-stat-num">5</span><span class="hero-stat-label">Social & Art Channels</span></div>
+      <div class="hero-stat-item"><span class="hero-stat-num">1</span><span class="hero-stat-label">Newsletter</span></div>
+      <div class="hero-stat-item"><span class="hero-stat-num">500+</span><span class="hero-stat-label">Works Published</span></div>
+    </div>
+  </div>
+
+  <!-- Scrolling ticker -->
+  <div class="hero-ticker">
+    <div class="hero-ticker-inner">
+      <span class="hero-ticker-item">Patreon</span>
+      <span class="hero-ticker-item">Fanbox</span>
+      <span class="hero-ticker-item">Twitter / X</span>
+      <span class="hero-ticker-item">Instagram</span>
+      <span class="hero-ticker-item">DeviantArt</span>
+      <span class="hero-ticker-item">Pixiv</span>
+      <span class="hero-ticker-item">Substack</span>
+      <span class="hero-ticker-item">Ko-fi</span>
+      <span class="hero-ticker-item">AnimeOTK</span>
+      <span class="hero-ticker-item">Patreon</span>
+      <span class="hero-ticker-item">Fanbox</span>
+      <span class="hero-ticker-item">Twitter / X</span>
+      <span class="hero-ticker-item">Instagram</span>
+      <span class="hero-ticker-item">DeviantArt</span>
+      <span class="hero-ticker-item">Pixiv</span>
+      <span class="hero-ticker-item">Substack</span>
+      <span class="hero-ticker-item">Ko-fi</span>
+      <span class="hero-ticker-item">AnimeOTK</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 1: SUPPORT & SUBSCRIBE -->
+<section class="media-section">
+  <div class="section-meta reveal">
+    <p class="section-label">Support the Studio</p>
+    <h2 class="section-title">Subscription Platforms & Shop</h2>
+    <p class="section-desc">Exclusive artworks, comic chapters, and behind-the-scenes content. Choose the platform that works best for you.</p>
+  </div>
+
+  <div class="sub-cards-grid">
+    <a href="https://www.patreon.com/starila" target="_blank" class="sub-card-media reveal reveal-delay-1">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M14.82 2.41c3.96 0 7.18 3.24 7.18 7.21 0 3.96-3.22 7.18-7.18 7.18-3.97 0-7.2-3.22-7.2-7.18 0-3.97 3.23-7.21 7.2-7.21M2 21.6h3.5V2.41H2V21.6z"/></svg>
+        </div>
+        <span class="platform-tag">Subscription</span>
+      </div>
+      <div class="card-bottom">
+        <p class="platform-name">Patreon</p>
+        <p class="platform-desc">Unlock exclusive high-resolution artworks, comic series, and tiered content starting from $5/mo. Three membership tiers — Student, Teacher, and Principle.</p>
+        <span class="visit-link">Visit Channel <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+      </div>
+    </a>
+
+    <a href="https://starila.fanbox.cc/" target="_blank" class="sub-card-media reveal reveal-delay-2">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 4H3a1 1 0 00-1 1v14a1 1 0 001 1h18a1 1 0 001-1V5a1 1 0 00-1-1zm-1 14H4V6h16v12zM8 11h8v2H8z"/></svg>
+        </div>
+        <span class="platform-tag">Subscription</span>
+      </div>
+      <div class="card-bottom">
+        <p class="platform-name">Fanbox</p>
+        <p class="platform-desc">Japanese platform equivalent for regional supporters. Access the same exclusive tier content via Pixiv Fanbox with yen-based pricing for convenience.</p>
+        <span class="visit-link">Visit Channel <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+      </div>
+    </a>
+
+    <a href="https://ko-fi.com/moonila" target="_blank" class="sub-card-media ko-fi-card reveal reveal-delay-3">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M23.881 8.948c-.773-4.085-4.859-4.199-4.859-4.199H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-7.31zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/></svg>
+        </div>
+        <span class="platform-tag">One-Time Support</span>
+      </div>
+      <div class="card-bottom">
+        <p class="platform-name">Ko-fi</p>
+        <p class="platform-desc">Prefer a one-time contribution? Buy me a coffee — every bit of support helps fund new artworks and longer comic productions.</p>
+        <span class="visit-link">Visit Page <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+      </div>
+    </a>
+
+    <div class="sub-card-media reveal reveal-delay-4" style="background:var(--cream);color:var(--ink);border:1px solid var(--border);opacity:0.55;cursor:default;pointer-events:none;">
+      <div class="card-top">
+        <div class="card-icon" style="opacity:0.4;">
+          <svg viewBox="0 0 24 24" style="fill:var(--ink)"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        </div>
+        <span class="platform-tag" style="border-color:rgba(17,17,17,0.2);color:var(--mid);">Shop — Coming Soon</span>
+      </div>
+      <div class="card-bottom">
+        <p class="platform-name" style="color:var(--ink);">Booth</p>
+        <p class="platform-desc" style="color:var(--mid);">Digital merchandise, downloadable art packs, and print-ready files. Launching soon as the studio's dedicated storefront.</p>
+        <span style="font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--mid);">Opening Soon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: SOCIAL & ART PLATFORMS -->
+<section class="media-section">
+  <div class="section-meta reveal">
+    <p class="section-label">Follow the Work</p>
+    <h2 class="section-title">Social & Art Platforms</h2>
+    <p class="section-desc">Stay updated with previews, announcements, and free content shared across multiple channels.</p>
+  </div>
+
+  <div class="social-strip">
+
+    <a href="https://twitter.com/starila_sp" target="_blank" class="social-card reveal">
+      <div class="social-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.259 5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </div>
+      <div>
+        <p class="social-card-name">Twitter / X</p>
+        <p class="social-card-desc">Real-time updates, WIP previews, and release announcements. The fastest way to catch new drops.</p>
+      </div>
+      <span class="social-card-action">Follow <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+    </a>
+
+    <a href="https://www.instagram.com/spankingstarila/" target="_blank" class="social-card reveal reveal-delay-1">
+      <div class="social-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </div>
+      <div>
+        <p class="social-card-name">Instagram</p>
+        <p class="social-card-desc">Curated art posts and story highlights for a more visual overview of the studio's output.</p>
+      </div>
+      <span class="social-card-action">Follow <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+    </a>
+
+    <a href="https://www.deviantart.com/starila" target="_blank" class="social-card reveal reveal-delay-2">
+      <div class="social-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M18.19 5.636l.37-.664V0H15.4L14.02 2.728l-.393.408H5.81v4.672h4.33L4.5 18.364l-.37.664V24H7.3l1.38-2.728.393-.408H16.2v-4.672h-4.33z"/></svg>
+      </div>
+      <div>
+        <p class="social-card-name">DeviantArt</p>
+        <p class="social-card-desc">A long-running portfolio of earlier and current artworks. Browse the full public archive on DA.</p>
+      </div>
+      <span class="social-card-action">Browse <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+    </a>
+
+    <a href="https://www.pixiv.net/en/users/43964086" target="_blank" class="social-card reveal reveal-delay-3">
+      <div class="social-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M4.935 0A4.924 4.924 0 000 4.935v14.13A4.924 4.924 0 004.935 24h14.13A4.924 4.924 0 0024 19.065V4.935A4.924 4.924 0 0019.065 0zm7.81 4.547c2.181 0 4.058.676 5.399 1.847a6.24 6.24 0 012.116 4.43c.012.28.012.558-.004.838-.23 4.152-3.346 6.89-7.658 6.89H9.623v3.86H7.19V4.547zm-.88 2.327H9.623v9.35h2.218c2.905 0 5.235-1.755 5.4-4.732.007-.175.007-.351.001-.527-.16-3.009-2.427-4.091-5.378-4.091z"/></svg>
+      </div>
+      <div>
+        <p class="social-card-name">Pixiv</p>
+        <p class="social-card-desc">Japanese art community presence. Selected works published for the Pixiv audience and community engagement.</p>
+      </div>
+      <span class="social-card-action">Browse <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+    </a>
+
+    <a href="https://animeotk.com/gallery/showgallery.php/ppuser/74922/username/starila" target="_blank" class="social-card reveal">
+      <div class="social-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+      </div>
+      <div>
+        <p class="social-card-name">AnimeOTK</p>
+        <p class="social-card-desc">Niche community gallery for anime-style spanking art. A dedicated archive of all public works on the platform.</p>
+      </div>
+      <span class="social-card-action">Browse Gallery <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+    </a>
+
+  </div>
+</section>
+
+<!-- SECTION 3: WRITING — SUBSTACK -->
+<section class="media-section" style="padding-bottom:0;">
+  <div class="section-meta reveal" style="padding: 0 0 3rem;">
+    <p class="section-label">Written Works</p>
+    <h2 class="section-title">Newsletter & Stories</h2>
+  </div>
+</section>
+
+<div class="reveal">
+  <div class="writing-block" style="margin: 0 4rem 5rem; border: 1px solid var(--border);">
+    <div class="writing-visual">
+      <p class="writing-visual-quote">"Stories<br>deserve<br>a stage."</p>
+      <p class="writing-visual-label">Moonila's Substack</p>
+    </div>
+    <div class="writing-info">
+      <p class="section-label">Substack</p>
+      <p class="platform-name" style="font-family:var(--font-d);font-size:2rem;font-weight:300;margin-bottom:0.8rem;">moonilaspanking</p>
+      <p class="platform-desc" style="color:var(--mid);font-size:0.88rem;line-height:1.8;margin-bottom:2rem;max-width:none;">Written stories, narrative arcs, and original fiction set in the Spankingland universe. Delivered directly to subscribers — no platform walls, just prose.</p>
+      <a href="https://moonilaspanking.substack.com/" target="_blank" class="writing-cta">
+        Read on Substack
+        <svg viewBox="0 0 10 10"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MINI FOOTER -->
+<div class="media-footer">
+  <p class="media-footer-text">© 2025 Alpha Centauri Studio &nbsp;·&nbsp; All content is the intellectual property of the artist.</p>
+  <div class="media-footer-links">
+    <a href="home.html">Home</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="shop.html">Shop</a>
+    <a href="media.html">Media</a>
+  </div>
+</div>
+
+
+<script>
+// Scroll reveal
+var revealEls = document.querySelectorAll('.reveal');
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.06 });
+revealEls.forEach(function(el) { obs.observe(el); });
+
+// ── CSV-DRIVEN PLATFORM LINKS ──
+// CSV columns expected: name, url  (matches platform names like Patreon, Fanbox, Ko-fi, Twitter, etc.)
+var MEDIA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTaZgGn826m4gCgg84cFTHoNNs8ect3oaqnkeMf3mlH2UeUIb6mOnaWIfopGtjqHn2H58KpLgoyG_VO/pub?output=csv';
+
+function parseCSVMedia(text) {
+  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  var lines=[]; var cur=''; var inQ=false;
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    if(ch==='"'){if(inQ&&text[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+    else if(ch==='\n'&&!inQ){lines.push(cur);cur='';}
+    else cur+=ch;
+  }
+  if(cur)lines.push(cur);
+  if(lines.length<2)return[];
+  function splitRow(line){var cols=[];var c='';var iq=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){if(iq&&line[i+1]==='"'){c+='"';i++;}else iq=!iq;}else if(ch===','&&!iq){cols.push(c);c='';}else c+=ch;}cols.push(c);return cols;}
+  var hdrs=splitRow(lines[0]);
+  var rows=[];
+  for(var r=1;r<lines.length;r++){
+    if(!lines[r].trim())continue;
+    var vals=splitRow(lines[r]);
+    var obj={};
+    hdrs.forEach(function(h,i){obj[h.trim().toLowerCase()]=(vals[i]||'').trim();});
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function normKey(s){ return (s||'').toLowerCase().replace(/[\s\/\-_.]/g,''); }
+
+function applyMediaLinks(urlMap) {
+  // Update all <a> tags that have a data-platform attribute OR match by href pattern
+  // We target: sub-card-media links and social-card links
+  var anchors = document.querySelectorAll('a[href]');
+  anchors.forEach(function(a) {
+    var platform = a.dataset.platform || '';
+    if (!platform) {
+      // Try to detect from visible text or inner name
+      var nameEl = a.querySelector('.platform-name, .social-card-name');
+      if (nameEl) platform = nameEl.textContent.trim();
+    }
+    if (!platform) return;
+    var key = normKey(platform);
+    Object.keys(urlMap).forEach(function(k) {
+      var nk = normKey(k);
+      if (nk === key || nk.indexOf(key) !== -1 || key.indexOf(nk) !== -1) {
+        if (urlMap[k]) { a.href = urlMap[k]; a.target = '_blank'; }
+      }
+    });
+  });
+}
+
+fetch(MEDIA_CSV_URL)
+  .then(function(r){ if(!r.ok) throw r.status; return r.text(); })
+  .then(function(text){
+    var rows = parseCSVMedia(text);
+    var urlMap = {};
+    rows.forEach(function(row){
+      var name = row['name'] || row['platform'] || row['title'] || row['channel'] || '';
+      var url  = row['url']  || row['link']     || row['href']  || row['website'] || '';
+      if(name && url) urlMap[name] = url;
+    });
+    applyMediaLinks(urlMap);
+  })
+  .catch(function(){ /* keep hardcoded fallbacks */ });
+</script>
+</body>
+</html>

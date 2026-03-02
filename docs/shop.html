@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — Alpha Centauri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f7f8fc; --white: #ffffff; --ink: #111111;
+      --mid: #6b7280; --accent: #8B83E8; --border: rgba(233,237,245,0.9);
+      --green: #8B83E8; --yellow: #FFD246; --pink: #FF4F9A; --purple: #8B83E8;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.07); --card-radius: 18px;
+      --font-d: 'Nunito', sans-serif;
+      --font-b: 'Nunito Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--white); color: var(--ink); font-family: var(--font-b); font-weight: 300; line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem; font-weight: 700; letter-spacing: 0.12em;
+      text-decoration: none; line-height: 1;
+      background: linear-gradient(135deg, #8B83E8 0%, #a89ef0 35%, #FFD246 65%, #FF4F9A 85%, #8B83E8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; filter: drop-shadow(0 1px 3px rgba(139,131,232,0.25));
+      transition: filter .25s;
+    }
+    .nav-logo:hover { filter: drop-shadow(0 1px 8px rgba(139,131,232,0.55)); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mid); text-decoration: none; transition: color .25s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+
+    /* ── PAGE INTRO ── */
+    .page-intro {
+      padding: 0;
+      background: var(--ink);
+      position: relative; overflow: hidden;
+    }
+    /* Dot grid background */
+    .page-intro::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(139,131,232,0.1) 1px, transparent 1px),
+        radial-gradient(circle, rgba(139,131,232,0.04) 1px, transparent 1px);
+      background-size: 40px 40px, 18px 18px;
+      background-position: 0 0, 20px 20px;
+    }
+    /* Floating background icons */
+    .intro-floats { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+    .intro-float { position: absolute; opacity: 0; animation: ifloat ease-in-out infinite; }
+    .intro-float svg { fill: var(--accent); }
+    @keyframes ifloat {
+      0%   { opacity: 0;    transform: translateY(20px) rotate(-6deg) scale(0.85); }
+      15%  { opacity: 0.07; }
+      80%  { opacity: 0.06; }
+      100% { opacity: 0;    transform: translateY(-60px) rotate(10deg) scale(1.1); }
+    }
+    /* Decorative ring */
+    .intro-ring {
+      position: absolute; top: -180px; right: -180px;
+      width: 500px; height: 500px; border-radius: 50%;
+      border: 1px solid rgba(139,131,232,0.07);
+      pointer-events: none; z-index: 1;
+    }
+    .intro-ring-2 {
+      position: absolute; bottom: -140px; left: -140px;
+      width: 380px; height: 380px; border-radius: 50%;
+      border: 1px solid rgba(139,131,232,0.05);
+      pointer-events: none; z-index: 1;
+    }
+    .page-intro-inner {
+      padding: 8rem 4rem 0;
+      position: relative; z-index: 2;
+    }
+    .page-intro-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding-bottom: 2rem; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .intro-eyebrow {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.7rem;
+    }
+    .intro-title {
+      font-family: var(--font-d); font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 300; font-style: italic; line-height: 1.05;
+      color: var(--cream); margin-bottom: 0;
+    }
+    .intro-desc {
+      font-size: 0.9rem; color: rgba(247,248,252,0.78);
+      max-width: 44ch; line-height: 1.8; align-self: flex-end;
+    }
+    /* Mini stats strip inside intro */
+    .intro-stats-strip {
+      display: flex; align-items: stretch;
+      border-top: 1px solid rgba(139,131,232,0.15);
+      margin-top: 1.5rem;
+    }
+    .intro-stat {
+      padding: 1.1rem 2rem; display: flex; flex-direction: column; gap: 0.2rem;
+      border-right: 1px solid rgba(139,131,232,0.12); flex: 1;
+    }
+    .intro-stat:last-child { border-right: none; }
+    .intro-stat-num { font-family: var(--font-d); font-size: 1.5rem; font-weight: 800; color: var(--cream); line-height: 1; }
+    .intro-stat-label { font-size: 0.56rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(247,248,252,0.35); }
+
+    /* Ticker strip */
+    .intro-ticker { overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(139,131,232,0.12); padding: 0.65rem 0; position: relative; z-index: 3; margin-top: 0; }
+    .intro-ticker-inner { display: inline-flex; gap: 3.5rem; animation: introTicker 22s linear infinite; }
+    .intro-ticker-item { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(139,131,232,0.4); display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+    .intro-ticker-item::before { content: '✦'; font-size: 0.38rem; }
+    @keyframes introTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ── FEATURED TRIO — full width, tall cards ── */
+    .intro-featured {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
+    }
+    .feat-card {
+      position: relative; overflow: hidden; cursor: pointer;
+      text-decoration: none; display: block;
+    }
+    .feat-card-thumb {
+      width: 100%; aspect-ratio: 4/5; display: block; position: relative;
+      overflow: hidden;
+    }
+    .feat-card-thumb-inner {
+      width: 100%; height: 100%;
+      transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .feat-card:hover .feat-card-thumb-inner { transform: scale(1.06); }
+    .feat-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,20,0.92) 0%, rgba(10,10,20,0.2) 55%, transparent 100%);
+    }
+    .feat-card-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2rem 1.8rem 1.6rem;
+    }
+    .feat-card-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .feat-card-badge svg { width: 12px; height: 12px; fill: var(--accent); flex-shrink: 0; }
+    .feat-card-title {
+      font-family: var(--font-d); font-size: clamp(1.1rem, 1.8vw, 1.5rem); font-weight: 400;
+      color: #fff; line-height: 1.2; margin-bottom: 0.5rem;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .feat-card-price {
+      font-family: var(--font-d); font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 300;
+      color: rgba(255,255,255,0.9);
+    }
+    .feat-rank {
+      position: absolute; top: 1rem; left: 1rem;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 400; color: var(--ink);
+      font-family: var(--font-d);
+    }
+
+    .intro-divider {
+      border: none; border-top: 1px solid rgba(139,131,232,0.22); margin: 0; display: block;
+    }
+
+    /* ── SHARED ── */
+    .shop-section { padding: 5rem 4rem; }
+    .section-eyebrow {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: var(--font-d); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 300; font-style: italic; line-height: 1.1; margin-bottom: 0.5rem;
+    }
+    .section-sub {
+      font-size: 0.88rem; color: var(--mid); max-width: 56ch; line-height: 1.75;
+    }
+    .section-header-row {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem;
+    }
+
+    /* ══════════════════════════════════
+       GALLERY-STYLE FILTER (shared)
+    ══════════════════════════════════ */
+    .filter-bar {
+      display: flex; align-items: center; gap: 0.6rem; margin-bottom: 2.8rem; flex-wrap: wrap;
+    }
+    .f-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1.3rem;
+      font-family: var(--font-b); font-size: 0.72rem; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer;
+      border: 1px solid var(--border); margin-left: 0;
+      background: transparent; color: var(--mid);
+      transition: all .2s; position: relative; user-select: none;
+    }
+    .f-btn:first-child { margin-left: 0; }
+    .f-btn.active, .f-btn:hover {
+      background: var(--ink); color: var(--white);
+      border-color: var(--ink); z-index: 1;
+    }
+
+    /* Dropdown (product collection filter) */
+    .f-dropdown { position: relative; }
+    .f-dropdown-arrow { font-size: 0.6rem; transition: transform .2s; display: inline-block; margin-left: 0.2rem; }
+    .f-dropdown:hover .f-dropdown-arrow,
+    .f-dropdown.open .f-dropdown-arrow { transform: rotate(180deg); }
+    .dropdown-menu {
+      position: absolute; top: calc(100% + 4px); left: -1px;
+      min-width: 260px;
+      background: var(--white); border: 1px solid var(--border);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+      opacity: 0; pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity .2s, transform .2s; z-index: 300;
+    }
+    .f-dropdown:hover .dropdown-menu,
+    .f-dropdown.open .dropdown-menu { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .dropdown-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.2rem;
+      font-size: 0.78rem; color: var(--mid);
+      cursor: pointer; transition: all .15s;
+      border-bottom: 1px solid var(--border);
+    }
+    .dropdown-item:last-child { border-bottom: none; }
+    .dropdown-item:hover { background: var(--cream); color: var(--ink); }
+    .dropdown-item.active { color: var(--accent); background: var(--cream); }
+    .dropdown-badge {
+      font-size: 0.62rem; background: var(--cream); color: var(--mid);
+      padding: 0.1rem 0.5rem; border-radius: 99px; letter-spacing: 0.06em;
+    }
+
+    /* ══════════════════════════════════
+       SUBSCRIBE SECTION
+    ══════════════════════════════════ */
+    #section-subscribe { background: var(--cream); }
+
+    .sub-note {
+      font-size: 0.8rem; color: var(--mid); background: var(--white);
+      border-left: 2px solid var(--accent); padding: 0.8rem 1.2rem;
+      margin-bottom: 2.5rem; line-height: 1.65; max-width: 620px;
+    }
+
+    /* 3-column grid, same structure as home */
+    .sub-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem;
+    }
+    .sub-card {
+      background: var(--white); border: 1px solid var(--border);
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: border-color .25s, transform .25s;
+      text-decoration: none; color: inherit;
+      cursor: pointer;
+    }
+    .sub-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .sub-card.hidden { display: none; }
+    .sub-card-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; position: relative; background: var(--cream); }
+    .sub-card-img img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; transition: transform .5s; display: block;
+    }
+    .sub-card:hover .sub-card-img img { transform: scale(1.05); }
+    .sub-card-body { padding: 1.4rem 1.6rem 1.6rem; flex: 1; display: flex; flex-direction: column; }
+    .sub-tier-name { font-family: var(--font-d); font-size: 1.15rem; font-weight: 400; margin-bottom: 0.35rem; }
+    .sub-price { font-size: 0.8rem; color: var(--accent); font-weight: 400; margin-bottom: 0.9rem; letter-spacing: 0.04em; }
+    .sub-desc { font-size: 0.82rem; color: var(--mid); line-height: 1.7; flex: 1; }
+
+    /* ══════════════════════════════════
+       DIGITAL PRODUCTS — compact grid (Booth.pm style)
+    ══════════════════════════════════ */
+    #section-products { background: var(--cream); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+    }
+
+    .product-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      transition: border-color .2s, box-shadow .2s;
+      overflow: hidden;
+    }
+    .product-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(17,17,17,0.08);
+    }
+    .product-card.hidden { display: none; }
+
+    /* Square thumbnail */
+    .pc-thumb {
+      width: 100%; aspect-ratio: 1/1;
+      overflow: hidden; background: var(--cream); position: relative; flex-shrink: 0;
+    }
+    .pc-thumb-inner {
+      width: 100%; height: 100%;
+      transition: transform .45s ease;
+    }
+    .product-card:hover .pc-thumb-inner { transform: scale(1.06); }
+
+    /* Card body */
+    .pc-body {
+      padding: 0.75rem 0.85rem 1rem;
+      display: flex; flex-direction: column; flex: 1;
+    }
+    .pc-type {
+      font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.35rem;
+    }
+    .pc-type.coming { color: var(--mid); }
+    .pc-title {
+      font-family: var(--font-d); font-size: 0.95rem; font-weight: 400;
+      line-height: 1.25; margin-bottom: 0.4rem;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .pc-intro {
+      font-size: 0.75rem; color: var(--mid); line-height: 1.55;
+      flex: 1; margin-bottom: 0.8rem;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .pc-footer {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+      margin-top: auto;
+    }
+    .pc-price {
+      font-family: var(--font-d); font-size: 1.15rem; font-weight: 300;
+      color: var(--ink); white-space: nowrap;
+    }
+    .pc-btn {
+      display: inline-block; padding: 0.38rem 0.85rem;
+      background: var(--ink); color: var(--white);
+      font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; transition: background .2s; white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .pc-btn:hover { background: var(--accent); }
+    .pc-btn.pc-soon {
+      background: transparent; color: var(--mid);
+      border: 1px dashed var(--border); cursor: default;
+    }
+    .pc-btn.pc-soon:hover { background: transparent; color: var(--mid); }
+
+    .products-empty {
+      grid-column: 1/-1; text-align: center; padding: 5rem 2rem;
+      font-family: var(--font-d); font-style: italic; font-size: 1.1rem; color: var(--mid);
+    }
+
+    /* ── GALLERY FOOTER ── */
+    .gallery-footer {
+      padding: 1.5rem 4rem;
+      border-top: 1px solid rgba(139,131,232,0.1);
+      background: var(--ink);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.72rem; color: rgba(247,248,252,0.78);
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .gallery-footer a { color: rgba(247,248,252,0.35); text-decoration: none; letter-spacing: 0.08em; transition: color .2s; }
+    .gallery-footer a:hover { color: var(--cream); }
+    .gallery-footer nav { display: flex; gap: 2rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1200px) { .products-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 900px) {
+      nav { padding: 1.1rem 1.5rem; }
+      .page-intro { padding: 6.5rem 1.8rem 0; }
+      .page-intro-header { padding-bottom: 1.5rem; flex-direction: column; align-items: flex-start; }
+      .shop-section { padding: 4rem 1.8rem; }
+      .sub-grid { grid-template-columns: 1fr 1fr; }
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .intro-featured { gap: 2px; }
+      .sub-grid { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-footer { padding: 1.2rem 1.5rem; }
+    }
+  
+    /* ══ INTERN CAMP DESIGN SYSTEM ══ */
+    @keyframes popIn{from{opacity:0;transform:scale(.88) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+
+    /* Nav redesign */
+    nav { border-radius: 0 0 18px 18px; border-bottom: 2px solid var(--border); background: rgba(255,255,255,0.97); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .nav-logo { font-family: 'Nunito', sans-serif !important; font-weight: 900 !important; letter-spacing: 0.04em !important; font-size: 1.1rem !important; }
+    .nav-links a { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.78rem; border-radius: 10px; padding: 0.35rem 0.8rem; transition: all .2s; }
+    .nav-links a:hover, .nav-links a.active { background: var(--purple); color: #fff !important; }
+
+    /* Heading fonts bold */
+    .section-title, .hero-title, .hero-title-slide, .update-featured-title,
+    .feature-title, .story-title, .platform-name, .intro-title, .stat-num,
+    .port-title, .sub-tier-name, .product-title, .novel-title, .pc-title,
+    .founder-name, h1, h2, h3 {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.01em;
+    }
+    .section-label, .eyebrow, .intro-left .eyebrow, .hero-label,
+    .update-type-badge, .feature-badge, .cat-divider-label {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.12em;
+    }
+
+    /* Cards — rounded + shadow */
+    .product-card, .sub-card, .update-card, .port-card,
+    .kpi-card, .feat-card, .story-card, .novel-card, .pc-body,
+    .feature-card, .founder-card, .illus-card, .sub-card-media,
+    .social-card, .writing-block {
+      border-radius: var(--card-radius) !important;
+      box-shadow: var(--card-shadow) !important;
+      overflow: hidden;
+    }
+    .update-featured { border-radius: var(--card-radius) !important; overflow: hidden !important; }
+
+    /* Colorful card top borders (cycling green/yellow/pink/purple) */
+    .product-card:nth-child(4n+1), .sub-card:nth-child(4n+1), .port-card:nth-child(4n+1), .illus-card:nth-child(4n+1) { border-top: 3px solid var(--purple) !important; }
+    .product-card:nth-child(4n+2), .sub-card:nth-child(4n+2), .port-card:nth-child(4n+2), .illus-card:nth-child(4n+2) { border-top: 3px solid var(--yellow) !important; }
+    .product-card:nth-child(4n+3), .sub-card:nth-child(4n+3), .port-card:nth-child(4n+3), .illus-card:nth-child(4n+3) { border-top: 3px solid var(--pink) !important; }
+    .product-card:nth-child(4n+4), .sub-card:nth-child(4n+4), .port-card:nth-child(4n+4), .illus-card:nth-child(4n+4) { border-top: 3px solid var(--purple) !important; }
+
+    /* Buttons — pill/rounded */
+    .btn-primary, .product-btn, .sub-btn, .nl-btn, .pc-btn, .story-read-btn,
+    .writing-cta, .hero-explore-btn, .sub-platform-btn, .f-btn.active,
+    .filter-tab.active, .filter-pill.active {
+      border-radius: 12px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+    }
+
+    /* Filter pills/tabs */
+    .filter-tab, .filter-pill, .f-btn {
+      border-radius: 30px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 700 !important;
+    }
+
+    /* Tags */
+    .product-badge, .feature-badge, .update-type-badge, .platform-tag,
+    .story-chapter-badge, .novel-badge, .pc-type {
+      border-radius: 20px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      padding: 0.25rem 0.8rem !important;
+    }
+
+    /* Colored accent labels */
+    .section-label, .eyebrow { color: var(--purple) !important; }
+    .update-type-badge, .feat-badge, .cat-divider-label, .hero-label { color: var(--purple) !important; border-color: var(--purple) !important; }
+
+    /* Hover lift animation on cards */
+    .product-card:hover, .sub-card:hover, .port-card:hover, .story-card:hover,
+    .social-card:hover, .founder-card:hover, .illus-card:hover {
+      transform: translateY(-5px) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12) !important;
+    }
+
+    /* Section backgrounds */
+    #updates, #shop, .media-section:nth-child(even) { background: var(--white) !important; }
+    #portfolio, .studio-intro, .founders-section { background: var(--cream) !important; }
+
+    /* Social links */
+    .social-link { border-radius: 12px !important; font-family: 'Nunito', sans-serif; font-weight: 700; }
+    .social-link:hover { background: rgba(139,131,232,0.12) !important; border-color: var(--purple) !important; }
+
+    /* Footer tweaks */
+    #site-footer::before { background-image: radial-gradient(circle, rgba(139,131,232,0.12) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    #site-footer::after { border-color: rgba(139,131,232,0.12) !important; }
+    .footer-deco-ring { border-color: rgba(139,131,232,0.08) !important; }
+    .footer-nl-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-brand-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-nl-col .section-title, .footer-brand-col .section-title { color: #fff !important; }
+
+    /* Gallery overlay accent */
+    .gallery-item .gallery-overlay { background: linear-gradient(to top, rgba(17,17,17,0.9) 0%, rgba(139,131,232,0.12) 100%) !important; }
+    .overlay-expand { background: var(--purple) !important; color: #fff !important; border-radius: 50% !important; }
+
+    /* Update featured body bg */
+    .update-featured-body { background: #111111 !important; }
+
+    /* popIn animation for section cards */
+    .port-card.visible, .product-card, .sub-card, .story-card, .illus-card.visible {
+      animation: popIn 0.45s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    /* Founder cards color accents */
+    .founder-card:nth-child(1) .avatar-placeholder { background: linear-gradient(140deg, #e6f9eb, #8B83E8 80%) !important; }
+    .founder-card:nth-child(2) .avatar-placeholder { background: linear-gradient(140deg, #fff8d6, #FFD246 80%) !important; }
+    .founder-card:nth-child(3) .avatar-placeholder { background: linear-gradient(140deg, #ffe8f3, #FF4F9A 80%) !important; }
+    .founder-card:nth-child(4) .avatar-placeholder { background: linear-gradient(140deg, #eeecfd, #8B83E8 80%) !important; }
+    .avatar-initial { color: rgba(255,255,255,0.8) !important; }
+
+    /* Hero label border update */
+    .hero-label { border-color: var(--purple) !important; }
+
+    /* Page hero dot grid */
+    .page-hero::before { background-image: radial-gradient(circle, rgba(139,131,232,0.15) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    .page-hero::after, .hero-deco-ring { border-color: rgba(139,131,232,0.1) !important; }
+
+    /* Dropdown menus */
+    .dropdown-menu { background: #13131f !important; border-color: rgba(139,131,232,0.2) !important; border-radius: 14px !important; }
+    .dropdown-item:hover, .dropdown-item.active { background: rgba(139,131,232,0.15) !important; }
+    .dropdown-item.active { color: var(--purple) !important; }
+    .dropdown-badge { background: rgba(139,131,232,0.15) !important; }
+
+    /* View all links */
+    .view-all-link, .view-all { color: var(--purple) !important; font-weight: 800; }
+
+    /* Lightbox */
+    .lightbox { background: rgba(10,10,20,0.93) !important; }
+    .lb-title { font-family: 'Nunito', sans-serif !important; font-weight: 800 !important; }
+
+    /* Letter lightbox */
+    .letter-wrap { border-radius: 20px !important; }
+
+    /* Slider arrows */
+    .slider-arrow { border-radius: 12px !important; }
+    .slider-dot.active { background: var(--purple) !important; }
+
+    /* Sub note */
+    .sub-note { border-left-color: var(--purple) !important; border-radius: 0 8px 8px 0 !important; }
+
+    /* Hero explore btn */
+    .hero-explore-btn { border-radius: 12px !important; border-color: rgba(255,255,255,0.6) !important; }
+    .hero-explore-btn:hover { background: var(--purple) !important; border-color: var(--purple) !important; }
+    
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="home.html" class="nav-logo">Alpha Centauri</a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="news.html">News</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="shop.html" class="active">Shop</a></li>
+    <li><a href="media.html">Media</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE INTRO -->
+<div class="page-intro">
+  <div class="intro-ring"></div>
+  <div class="intro-ring-2"></div>
+
+  <!-- Floating background icons -->
+  <div class="intro-floats">
+    <div class="intro-float" style="left:6%;top:35%;width:60px;height:60px;animation-duration:12s;animation-delay:0s;">
+      <svg viewBox="0 0 24 24" width="60" height="60"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </div>
+    <div class="intro-float" style="right:8%;top:20%;width:52px;height:52px;animation-duration:15s;animation-delay:2s;">
+      <svg viewBox="0 0 24 24" width="52" height="52"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+    <div class="intro-float" style="left:45%;top:15%;width:40px;height:40px;animation-duration:18s;animation-delay:5s;">
+      <svg viewBox="0 0 24 24" width="40" height="40"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    </div>
+    <div class="intro-float" style="right:24%;top:55%;width:36px;height:36px;animation-duration:20s;animation-delay:8s;">
+      <svg viewBox="0 0 24 24" width="36" height="36"><path d="M14.82 2.41c3.96 0 7.18 3.24 7.18 7.21 0 3.96-3.22 7.18-7.18 7.18-3.97 0-7.2-3.22-7.2-7.18 0-3.97 3.23-7.21 7.2-7.21M2 21.6h3.5V2.41H2V21.6z"/></svg>
+    </div>
+  </div>
+
+  <div class="page-intro-inner">
+    <div class="page-intro-header">
+      <div>
+        <p class="intro-eyebrow">The Studio Shop</p>
+        <h1 class="intro-title">Shopping Cart</h1>
+      </div>
+      <p class="intro-desc">Subscribe for exclusive monthly content, or purchase standalone digital collections and comic series — delivered directly to you.</p>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intro-stats-strip">
+      <div class="intro-stat"><span class="intro-stat-num">3</span><span class="intro-stat-label">Subscription Tiers</span></div>
+      <div class="intro-stat"><span class="intro-stat-num">20+</span><span class="intro-stat-label">Digital Products</span></div>
+      <div class="intro-stat"><span class="intro-stat-num">500+</span><span class="intro-stat-label">Works in Archive</span></div>
+      <div class="intro-stat"><span class="intro-stat-num">3</span><span class="intro-stat-label">Platforms to Choose</span></div>
+    </div>
+  </div>
+
+  <div class="intro-featured" id="featuredTrio" style="position:relative;z-index:2;margin-top:2rem;"></div>
+
+  <!-- Ticker -->
+  <div class="intro-ticker" style="position:relative;z-index:2;">
+    <div class="intro-ticker-inner">
+      <span class="intro-ticker-item">Digital Downloads</span>
+      <span class="intro-ticker-item">Patreon Exclusive</span>
+      <span class="intro-ticker-item">Fanbox Plans</span>
+      <span class="intro-ticker-item">SubscribeStar</span>
+      <span class="intro-ticker-item">Art Collections</span>
+      <span class="intro-ticker-item">Comic Series</span>
+      <span class="intro-ticker-item">High Resolution</span>
+      <span class="intro-ticker-item">Digital Downloads</span>
+      <span class="intro-ticker-item">Patreon Exclusive</span>
+      <span class="intro-ticker-item">Fanbox Plans</span>
+      <span class="intro-ticker-item">SubscribeStar</span>
+      <span class="intro-ticker-item">Art Collections</span>
+      <span class="intro-ticker-item">Comic Series</span>
+      <span class="intro-ticker-item">High Resolution</span>
+    </div>
+  </div>
+</div>
+<hr class="intro-divider" />
+
+<!-- ═══════════════════════════════════════
+     SUBSCRIBE
+════════════════════════════════════════ -->
+<section id="section-subscribe" class="shop-section">
+  <div class="section-header-row">
+    <div>
+      <p class="section-eyebrow">Membership</p>
+      <h2 class="section-title">Subscribe &amp; Support</h2>
+      <p class="section-sub" style="margin-top:0.5rem;">Support the studio and gain access to exclusive content. Choose the platform that suits you best.</p>
+    </div>
+  </div>
+
+  <!-- Platform filter — gallery style -->
+  <div class="filter-bar">
+    <button class="f-btn active" onclick="switchPlatform('patreon', this)">Patreon</button>
+    <button class="f-btn" onclick="switchPlatform('fanbox', this)">Fanbox</button>
+    <button class="f-btn" onclick="switchPlatform('subscribestar', this)">SubscribeStar</button>
+  </div>
+
+  <div class="sub-note">I'm aware that some platforms may attempt to bypass session keys to leak exclusive works. However, I'm still sharing tier info here openly. Your support helps sustain the team and develop upcoming projects.</div>
+
+  <div class="sub-grid" id="subGrid"></div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     DIGITAL PRODUCTS
+════════════════════════════════════════ -->
+<section id="section-products" class="shop-section" style="background:var(--cream);">
+  <div class="section-header-row">
+    <div>
+      <p class="section-eyebrow">Digital Products</p>
+      <h2 class="section-title">Own the Collection</h2>
+      <p class="section-sub" style="margin-top:0.5rem;">High-resolution art packs and complete comic series. Each purchase includes a personal-use licence.</p>
+    </div>
+  </div>
+
+  <!-- Filter bar — gallery style with collection dropdown -->
+  <div class="filter-bar">
+    <button class="f-btn active" data-filter="all" onclick="filterProducts('all', this)">All</button>
+    <div class="f-dropdown" id="collDropdown">
+      <button class="f-btn" id="collBtn">
+        Collection <span class="f-dropdown-arrow">▼</span>
+      </button>
+      <div class="dropdown-menu" id="collMenu"></div>
+    </div>
+  </div>
+
+  <div class="products-grid" id="productList"></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="gallery-footer">
+  <span>&#169; 2026 Alpha Centauri. All rights reserved.</span>
+</footer>
+
+<script>
+// ── HELPERS ──
+function wixImg(wixUrl, w, h) {
+  w = w || 800; h = h || 600;
+  var m = wixUrl.match(/wix:image:\/\/v1\/([^/]+)\/([^#?]+)/);
+  if (!m) return '';
+  return 'https://static.wixstatic.com/media/' + m[1] + '/v1/fill/w_' + w + ',h_' + h + ',al_c,q_85,enc_avif,quality_auto/' + m[2];
+}
+
+// ══════════════════════════════════════
+// FEATURED TRIO — Best Seller · Highest Rated · Most Favourited
+// Replace gradient / img / url with real product data when ready
+// ══════════════════════════════════════
+var FEATURED = [
+  {
+    badge: "Best Seller",
+    badgeIcon: '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+    title: "School Corporal Punishment — Full Series",
+    price: "$20",
+    url: "https://www.patreon.com/starila",
+    gradient: "linear-gradient(175deg,#E2D5C8,#B8936A,#7A5538)"
+  },
+  {
+    badge: "Highest Rated",
+    badgeIcon: '<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>',
+    title: "Spanking Art Collection Vol. 1",
+    price: "$12",
+    url: "https://www.patreon.com/starila",
+    gradient: "linear-gradient(160deg,#E8D5C4,#C4956A,#8B5A2B)"
+  },
+  {
+    badge: "Most Favourited",
+    badgeIcon: '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+    title: "Classroom of the Elite — Full Bundle",
+    price: "$28",
+    url: "https://www.patreon.com/starila",
+    gradient: "linear-gradient(160deg,#0E1A2A,#2A4A6E,#4A7EAE)"
+  }
+];
+
+(function buildFeaturedTrio() {
+  var container = document.getElementById('featuredTrio');
+  FEATURED.forEach(function(f, i) {
+    var a = document.createElement('a');
+    a.className = 'feat-card';
+    a.href = f.url;
+    a.target = '_blank';
+    a.innerHTML =
+      '<div class="feat-card-thumb">' +
+        '<div class="feat-card-thumb-inner" style="background:' + f.gradient + ';">' +
+          (f.img ? '<img src="' + f.img + '" alt="' + f.title + '" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'" />' : '') +
+        '</div>' +
+        '<div class="feat-card-overlay"></div>' +
+        '<div class="feat-rank">' + (i + 1) + '</div>' +
+        '<div class="feat-card-info">' +
+          '<div class="feat-card-badge">' + f.badgeIcon + f.badge + '</div>' +
+          '<p class="feat-card-title">' + f.title + '</p>' +
+          '<p class="feat-card-price">' + f.price + '</p>' +
+        '</div>' +
+      '</div>';
+    container.appendChild(a);
+  });
+})();
+
+// ══════════════════════════════════════
+// SUBSCRIBE TIERS
+// Platform key: 'all' shows patreon price by default.
+// Add fanbox/subscribestar-specific data when available.
+// ══════════════════════════════════════
+var TIERS = [
+  {
+    name: "Student",
+    price: {
+      patreon: "$5.00 / month",
+      fanbox:  "¥700 / month",
+      subscribestar: "$5.00 / month"
+    },
+    img: "wix:image://v1/2ae57a_08e37153aebb4b589f2613cfc8b6e6f1~mv2.png/Mooncake%20Fire%2001-A.png",
+    gradient: "linear-gradient(160deg,#2A1F14,#6B4A28,#8B83E8)",
+    desc: "Access all artworks in this tier from the beginning (including variants and non-text artworks).<br><br>Monthly update: short stories with seasonal themes or fanart from anime / cartoon / movie / game.<br><br>Format: 3\u20134 pictures / 1 comic page + 1 picture",
+    url: {
+      patreon: "https://www.patreon.com/c/starila",
+      fanbox:  "https://starila.fanbox.cc/",
+      subscribestar: "https://subscribestar.adult/starila"
+    }
+  },
+  {
+    name: "Teacher",
+    price: {
+      patreon: "$8.50 / month",
+      fanbox:  "¥1,200 / month",
+      subscribestar: "$8.50 / month"
+    },
+    img: "wix:image://v1/2ae57a_cb15cb0ea10d45a39f96e9561339ea25~mv2.jpg/Barbara%20x%20Jean%20x%20Klee%2002-A_edited.jpg",
+    gradient: "linear-gradient(160deg,#0E1A2A,#2A4A6E,#4A7EAE)",
+    desc: "All artworks from Student + Monitor + Teacher tier.<br><br>Update: detailed short stories with intricate character design (elaborate outfits, custom costumes, accessories\u2026).<br><br>Format: 2 large-size comic pages (= 4 pages)",
+    url: {
+      patreon: "https://www.patreon.com/c/starila",
+      fanbox:  "https://starila.fanbox.cc/",
+      subscribestar: "https://subscribestar.adult/starila"
+    }
+  },
+  {
+    name: "Principle",
+    price: {
+      patreon: "$10.00 / month",
+      fanbox:  "¥1,500 / month",
+      subscribestar: "$10.00 / month"
+    },
+    img: "wix:image://v1/2ae57a_6a9556f49712457799e5c6b665bad8b0~mv2.jpg/9_edited.jpg",
+    gradient: "linear-gradient(145deg,#200D15,#6B2845,#B84878)",
+    desc: "Access to all artworks from all tiers from the beginning.<br><br>Update: \u201cThe Spanking Institute\u201d series + short manga chapters from popular anime/game fanart.<br><br>Format: 12\u201315 comic pages (series) / ~30 comic pages (fanart manga)",
+    url: {
+      patreon: "https://www.patreon.com/c/starila",
+      fanbox:  "https://starila.fanbox.cc/",
+      subscribestar: "https://subscribestar.adult/starila"
+    }
+  }
+];
+
+var currentPlatform = 'patreon';
+
+// ── CSV-DRIVEN SUBSCRIBE — same approach as home.html ──
+var SUB_CSV_URL_SHOP = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSR1jDM6j090BgWWUJRDRLTRuaxIC6Vl7Oyu8KGrjWcb639r6nd5uS13VH29P6GiojJcKFXnd1HzJB3/pub?output=csv';
+
+function parseCSVShop(text) {
+  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  var lines=[]; var cur=''; var inQ=false;
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    if(ch==='"'){if(inQ&&text[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+    else if(ch==='\n'&&!inQ){lines.push(cur);cur='';}
+    else cur+=ch;
+  }
+  if(cur)lines.push(cur);
+  if(lines.length<2)return[];
+  function splitRow(line){var cols=[];var c='';var iq=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){if(iq&&line[i+1]==='"'){c+='"';i++;}else iq=!iq;}else if(ch===','&&!iq){cols.push(c);c='';}else c+=ch;}cols.push(c);return cols;}
+  var hdrs=splitRow(lines[0]);
+  var rows=[];
+  for(var r=1;r<lines.length;r++){
+    if(!lines[r].trim())continue;
+    var vals=splitRow(lines[r]);
+    var obj={};
+    hdrs.forEach(function(h,i){obj[h.trim().toLowerCase()]=(vals[i]||'').trim();});
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function pickFieldShop(row, keys) {
+  for(var i=0;i<keys.length;i++){ var v=row[keys[i].toLowerCase()]; if(v!==undefined&&v!=='')return v; }
+  return '';
+}
+
+function resolveImgShop(raw,w,h){
+  w=w||600;h=h||450;
+  if(!raw||!raw.trim())return'';
+  var s=raw.trim();
+  if(s.indexOf('https://')===0||s.indexOf('http://')===0)return s;
+  var m=s.match(/wix:image:\/\/v1\/([^/]+)\/([^#?\s]+)/);
+  if(!m)return'';
+  return 'https://static.wixstatic.com/media/'+m[1]+'/v1/fill/w_'+w+',h_'+h+',al_c,q_85,enc_avif,quality_auto/'+m[2];
+}
+
+function formatSubDescShop(text) {
+  if (!text) return '';
+  var lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+  var html = '';
+  lines.forEach(function(line) {
+    line = line.trim(); if (!line) return;
+    if (line.indexOf('- ') === 0) {
+      html += '<span class="sub-desc-bullet">&#8212; ' + line.slice(2) + '</span>';
+    } else {
+      html += '<span class="sub-desc-line">' + line + '</span>';
+    }
+  });
+  if (lines.length === 1) {
+    var parts = text.split(/\.\s{2,}|\.\s(?=[A-Z])/);
+    if (parts.length > 1) {
+      html = '';
+      parts.forEach(function(part) {
+        part = part.trim(); if (!part) return;
+        var sentence = part + (part.slice(-1) !== '.' ? '.' : '');
+        if (sentence.indexOf('- ') !== -1) {
+          var chunks = sentence.split(/\s+-\s+/);
+          html += '<span class="sub-desc-line">' + chunks[0].trim() + '</span>';
+          for (var j=1;j<chunks.length;j++) html += '<span class="sub-desc-bullet">&#8212; ' + chunks[j].trim() + '</span>';
+        } else { html += '<span class="sub-desc-line">' + sentence + '</span>'; }
+      });
+    }
+  }
+  return html || '<span class="sub-desc-line">' + text + '</span>';
+}
+
+// Add sub-desc line/bullet CSS if not present
+(function addSubDescCSS(){
+  var style = document.createElement('style');
+  style.textContent = '.sub-desc{display:flex;flex-direction:column;gap:0.45rem;}.sub-desc-line{display:block;}.sub-desc-bullet{display:block;padding-left:0.6rem;opacity:0.85;}';
+  document.head.appendChild(style);
+})();
+
+// CSV-loaded tiers (fallback to hardcoded TIERS)
+var csvTiersLoaded = null;
+
+function buildSubGrid() {
+  var grid = document.getElementById('subGrid');
+  grid.innerHTML = '';
+  var p = currentPlatform;
+  var source = csvTiersLoaded || TIERS;
+
+  source.forEach(function(tier) {
+    var name, price, desc, imgRaw, tierUrl;
+
+    if (csvTiersLoaded) {
+      // CSV row — pick fields
+      name   = pickFieldShop(tier, ['name','tier','tier name','title']) || 'Tier';
+      // Price: try platform-specific column first, then generic
+      price  = pickFieldShop(tier, [p + ' price', p+'_price', 'price '+p, 'price']) || '';
+      desc   = pickFieldShop(tier, ['description','desc','content','details','benefits']) || '';
+      imgRaw = pickFieldShop(tier, ['image','thumbnail','cover','img','photo','image url','image_url']) || '';
+      // URL: try platform-specific then generic
+      tierUrl= pickFieldShop(tier, [p + ' url', p+'_url', 'url '+p, 'url','link']) || '#';
+    } else {
+      // Hardcoded TIERS object
+      name    = tier.name;
+      price   = tier.price[p] || '';
+      desc    = tier.desc || '';
+      imgRaw  = tier.img || '';
+      tierUrl = tier.url[p] || '#';
+    }
+
+    var imgSrc = resolveImgShop(imgRaw, 600, 450) || wixImg(imgRaw, 600, 450);
+    var gradient = (tier.gradient || 'linear-gradient(160deg,#2A1F14,#6B4A28,#8B83E8)');
+    var descHtml = formatSubDescShop(desc);
+
+    var card = document.createElement('a');
+    card.className = 'sub-card';
+    card.href = tierUrl;
+    card.target = '_blank';
+    card.innerHTML =
+      '<div class="sub-card-img">' +
+        '<div style="width:100%;height:100%;background:' + gradient + ';position:relative;">' +
+          (imgSrc ? '<img src="' + imgSrc + '" alt="' + name + '" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'" />' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="sub-card-body">' +
+        '<p class="sub-tier-name">' + name + '</p>' +
+        '<p class="sub-price">' + price + '</p>' +
+        '<div class="sub-desc">' + descHtml + '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function switchPlatform(platform, btn) {
+  document.querySelectorAll('#section-subscribe .filter-bar .f-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentPlatform = platform;
+  buildSubGrid();
+}
+
+// Try loading from CSV first; fallback to hardcoded TIERS
+fetch(SUB_CSV_URL_SHOP)
+  .then(function(r){ if(!r.ok) throw r.status; return r.text(); })
+  .then(function(text){
+    var rows = parseCSVShop(text);
+    if (rows.length) { csvTiersLoaded = rows; }
+    buildSubGrid();
+  })
+  .catch(function(){ buildSubGrid(); });
+
+// ══════════════════════════════════════
+// DIGITAL PRODUCTS — compact grid
+// ══════════════════════════════════════
+var PRODUCTS = [
+  // ─── Digital Downloads ───────────────────────────────
+  { type:"Digital Download", title:"Spanking Art Collection Vol. 1",         collection:"Other",                    desc:"Standalone paintings, full-size PNG, print-ready. Includes variant versions.",       price:"$12",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(160deg,#E8D5C4,#C4956A,#8B5A2B)" },
+  { type:"Digital Download", title:"School Corporal Punishment — Full Series",collection:"School Corporal Punishment",desc:"Complete SCP comic series, all chapters, HD + variant pages included.",             price:"$20",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(175deg,#E2D5C8,#B8936A,#7A5538)" },
+  { type:"Digital Download", title:"Classroom of the Elite — Vol. 1",        collection:"Classroom of the Elite",   desc:"COTE Remake chapters 1–5, full resolution digital comic bundle.",                   price:"$15",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(160deg,#0E1A2A,#2A4A6E,#4A7EAE)" },
+  { type:"Digital Download", title:"Classroom of the Elite — Vol. 2",        collection:"Classroom of the Elite",   desc:"COTE Remake chapters 6–10. Includes all variant and uncensored pages.",             price:"$15",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(150deg,#0A1420,#1A3860,#3A68A0)" },
+  { type:"Digital Download", title:"Demon Slayer Collection",                 collection:"Demon Slayer",             desc:"Shinobu, Kanao, Aoi — selected paintings and short comic pages.",                  price:"$10",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(145deg,#200D15,#6B2845,#B84878)" },
+  { type:"Digital Download", title:"Disney Discipline Pack",                  collection:"Disney",                   desc:"Elsa × Anna and other Disney characters. High-res PNG collection.",                price:"$10",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(155deg,#0A1808,#2A5820,#5A9858)" },
+  { type:"Digital Download", title:"Genshin Impact — Vol. 1",                collection:"Genshin Impact",           desc:"Barbara, Jean, Klee and more. Selected paintings and variant versions.",           price:"$12",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(170deg,#14100A,#4A3418,#886040)" },
+  { type:"Digital Download", title:"Genshin Impact — Vol. 2",                collection:"Genshin Impact",           desc:"New additions to the Genshin collection. Includes bonus wallpaper resolution.",    price:"$12",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(165deg,#1A1408,#5A4020,#9A7050)" },
+  { type:"Digital Download", title:"The Spanking Institute — Series 1",       collection:"Original",                 desc:"Original series. 12–15 comic pages per chapter, HD files.",                       price:"$18",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(140deg,#1A1220,#4A2858,#8A5898)" },
+  { type:"Digital Download", title:"The Spanking Institute — Series 2",       collection:"Original",                 desc:"Continuation of the Institute arc. Includes alternate endings.",                  price:"$18",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(135deg,#140E1A,#3A2050,#7A5090)" },
+  { type:"Digital Download", title:"Mooncake Fire Collection",                collection:"Other",                    desc:"Fan-art and seasonal paintings from the Student tier highlights.",                 price:"$8",   url:"https://www.patreon.com/starila",  gradient:"linear-gradient(155deg,#2A1A0A,#7A4A1A,#C07A3A)" },
+  { type:"Digital Download", title:"Holiday Special 2024",                    collection:"Other",                    desc:"New Year collection — best moments of the year, curated artworks.",               price:"$8",   url:"https://www.patreon.com/starila",  gradient:"linear-gradient(160deg,#0A1820,#204860,#4088A8)" },
+  { type:"Digital Download", title:"Teacher Tier Best-of Pack",               collection:"Other",                    desc:"Curated artworks from the Teacher tier — intricate designs, detailed outfits.",   price:"$14",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(150deg,#1A0A1A,#50204A,#905880)" },
+  { type:"Digital Download", title:"School CP 001 — Single Chapter",          collection:"School Corporal Punishment",desc:"Chapter 1.1–1.5 of the SCP series. Ideal introduction to the story.",            price:"$6",   url:"https://www.patreon.com/starila",  gradient:"linear-gradient(175deg,#E8E0D8,#C8A880,#906040)" },
+  { type:"Digital Download", title:"Frozen — Elsa × Anna",                    collection:"Disney",                   desc:"Single-issue art book for the Frozen discipline painting.",                        price:"$6",   url:"https://www.patreon.com/starila",  gradient:"linear-gradient(155deg,#08101A,#103050,#305880)" },
+  { type:"Digital Download", title:"My Happy Family Series",                  collection:"Original",                 desc:"Full comic chapter from the original My Happy Family arc.",                       price:"$10",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(145deg,#101A10,#204820,#508050)" },
+  { type:"Digital Download", title:"Miyo Saimori Art Book",                   collection:"Other",                    desc:"Curated art book featuring Miyo Saimori paintings and variants.",                 price:"$8",   url:"https://www.patreon.com/starila",  gradient:"linear-gradient(160deg,#1A1008,#503020,#906050)" },
+  { type:"Digital Download", title:"Mao Mao × Xiaolan Pack",                  collection:"Other",                    desc:"Art pack from the Mao Mao × Xiaolan paintings, full resolution.",                 price:"$8",   url:"https://www.patreon.com/starila",  gradient:"linear-gradient(145deg,#200A10,#602030,#A05060)" },
+  { type:"Digital Download", title:"Mita Art Book",                           collection:"Other",                    desc:"Single character focus — Mita paintings and edited variants.",                    price:"$6",   url:"https://www.patreon.com/starila",  gradient:"linear-gradient(155deg,#1A1018,#4A2848,#806878)" },
+  { type:"Digital Download", title:"Barbara × Jean × Klee",                   collection:"Genshin Impact",           desc:"Three-character story pack, includes two large comic pages + paintings.",          price:"$14",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(170deg,#1A1208,#4A3818,#887848)" },
+  { type:"Digital Download", title:"Spanking Art Collection Vol. 2",          collection:"Other",                    desc:"Second volume of standalone paintings. New characters and situations.",             price:"$12",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(160deg,#D8C8B8,#B89878,#806838)" },
+  { type:"Digital Download", title:"COTE Remake — Full Bundle",               collection:"Classroom of the Elite",   desc:"Complete COTE Remake collection. All chapters, all variants.",                    price:"$28",  url:"https://www.patreon.com/starila",  gradient:"linear-gradient(155deg,#0A1828,#183860,#307898)" },
+  // ─── Coming Soon ─────────────────────────────────────
+  { type:"Coming Soon",      title:"Digital Novel — Vol. 1",                  collection:"Coming Soon",              desc:"Original fiction in the Spankingland universe. Rich narrative, illustrated.",     price:"TBA",  url:null,                               gradient:"linear-gradient(140deg,#D8C8D4,#A87898,#6A4060)" },
+  { type:"Coming Soon",      title:"The Spanking Institute — Series 3",       collection:"Coming Soon",              desc:"Next chapter in the Institute arc. In production.",                              price:"TBA",  url:null,                               gradient:"linear-gradient(138deg,#180E20,#402060,#7858A0)" },
+  { type:"Coming Soon",      title:"Demon Slayer — Vol. 2",                   collection:"Coming Soon",              desc:"Expanded Demon Slayer collection with new characters. In development.",          price:"TBA",  url:null,                               gradient:"linear-gradient(145deg,#240F1A,#7A3050,#B86080)" }
+];
+
+// Build collection dropdown items
+var collCounts = {};
+PRODUCTS.forEach(function(p) { collCounts[p.collection] = (collCounts[p.collection] || 0) + 1; });
+var collMenu = document.getElementById('collMenu');
+Object.keys(collCounts).forEach(function(coll) {
+  var item = document.createElement('div');
+  item.className = 'dropdown-item';
+  item.dataset.collection = coll;
+  item.innerHTML = coll + '<span class="dropdown-badge">' + collCounts[coll] + '</span>';
+  item.addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.querySelectorAll('.dropdown-item').forEach(function(d) { d.classList.remove('active'); });
+    item.classList.add('active');
+    document.getElementById('collBtn').classList.add('active');
+    document.querySelector('[data-filter="all"]').classList.remove('active');
+    filterProducts(coll, null);
+    document.getElementById('collDropdown').classList.remove('open');
+  });
+  collMenu.appendChild(item);
+});
+
+// Toggle dropdown on click (mobile)
+document.getElementById('collBtn').addEventListener('click', function(e) {
+  e.stopPropagation();
+  document.getElementById('collDropdown').classList.toggle('open');
+});
+document.addEventListener('click', function() {
+  document.getElementById('collDropdown').classList.remove('open');
+});
+
+// Build compact product cards
+(function buildProducts() {
+  var list = document.getElementById('productList');
+  PRODUCTS.forEach(function(p) {
+    var card = document.createElement('div');
+    card.className = 'product-card';
+    card.dataset.collection = p.collection;
+    var isComing = p.type === 'Coming Soon';
+    card.innerHTML =
+      '<div class="pc-thumb">' +
+        '<div class="pc-thumb-inner" style="background:' + p.gradient + ';"></div>' +
+      '</div>' +
+      '<div class="pc-body">' +
+        '<p class="pc-type' + (isComing ? ' coming' : '') + '">' + p.type + '</p>' +
+        '<p class="pc-title">' + p.title + '</p>' +
+        '<p class="pc-intro">' + p.desc + '</p>' +
+        '<div class="pc-footer">' +
+          '<span class="pc-price">' + p.price + '</span>' +
+          (p.url
+            ? '<a href="' + p.url + '" target="_blank" class="pc-btn">Get Now</a>'
+            : '<span class="pc-btn pc-soon">Soon</span>') +
+        '</div>' +
+      '</div>';
+    list.appendChild(card);
+  });
+})();
+
+function filterProducts(filter, btn) {
+  if (btn) {
+    document.querySelectorAll('#section-products .filter-bar .f-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.dropdown-item').forEach(function(d) { d.classList.remove('active'); });
+    document.getElementById('collBtn').classList.remove('active');
+  }
+  document.querySelectorAll('.product-card').forEach(function(card) {
+    if (filter === 'all' || card.dataset.collection === filter) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  var list = document.getElementById('productList');
+  var visible = list.querySelectorAll('.product-card:not(.hidden)').length;
+  var empty = list.querySelector('.products-empty');
+  if (visible === 0 && !empty) {
+    var el = document.createElement('div');
+    el.className = 'products-empty';
+    el.textContent = 'No products in this collection yet.';
+    list.appendChild(el);
+  } else if (visible > 0 && empty) {
+    empty.remove();
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News — Alpha Centauri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f7f8fc; --white: #ffffff; --ink: #111111;
+      --mid: #6b7280; --accent: #8B83E8; --border: rgba(233,237,245,0.9);
+      --green: #8B83E8; --yellow: #FFD246; --pink: #FF4F9A; --purple: #8B83E8;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.07); --card-radius: 18px;
+      --font-d: 'Nunito', sans-serif;
+      --font-b: 'Nunito Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--white); color: var(--ink); font-family: var(--font-b); font-weight: 300; line-height: 1.6; }
+
+    /* ── NAV (same as Home) ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem; font-weight: 700; letter-spacing: 0.12em;
+      text-decoration: none; line-height: 1;
+      background: linear-gradient(135deg, #8B83E8 0%, #a89ef0 35%, #FFD246 65%, #FF4F9A 85%, #8B83E8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 1px 3px rgba(139,131,232,0.25));
+      transition: filter .25s;
+    }
+    .nav-logo:hover { filter: drop-shadow(0 1px 8px rgba(139,131,232,0.55)); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mid); text-decoration: none; transition: color .25s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+
+    /* ── SHARED SECTION STYLES ── */
+    .news-section { padding: 5rem 4rem; }
+    .news-section + .news-section { border-top: 1px solid var(--border); }
+    .section-eyebrow {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .section-heading {
+      font-family: var(--font-d); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 300; font-style: italic; line-height: 1.1; margin-bottom: 0.5rem;
+    }
+    .section-heading em { font-style: italic; }
+    .section-sub {
+      font-size: 0.88rem; color: var(--mid); max-width: 52ch; line-height: 1.75; margin-bottom: 2.5rem;
+    }
+    .section-header-row {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .view-all-btn {
+      font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--mid); text-decoration: none;
+      border-bottom: 1px solid currentColor; padding-bottom: 1px;
+      transition: color .2s; white-space: nowrap;
+    }
+    .view-all-btn:hover { color: var(--ink); }
+
+    /* ── PRIMARY BTN ── */
+    .btn-primary {
+      display: inline-block; padding: 0.7rem 1.8rem;
+      background: var(--ink); color: var(--white);
+      font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
+      text-decoration: none; transition: background .2s, transform .15s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-block; padding: 0.7rem 1.8rem;
+      background: transparent; color: var(--ink);
+      font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
+      text-decoration: none; border: 1px solid var(--border);
+      transition: border-color .2s, color .2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       1. NEWS HERO BANNER
+    ══════════════════════════════════════ */
+    .news-hero {
+      position: relative; width: 100%; overflow: hidden;
+      height: 340px;
+      margin-top: 66px; /* clear fixed nav */
+      background: linear-gradient(135deg, #0a0a14 0%, #0d0d1e 40%, #0f0a1a 70%, #0a0a14 100%);
+    }
+    .news-hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .news-hero-content {
+      position: relative; z-index: 5; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      padding: 3rem 4rem 3rem;
+      background: linear-gradient(to right, rgba(10,10,20,0.65) 0%, transparent 72%);
+    }
+    .news-hero-eyebrow {
+      font-size: 0.66rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--accent); font-family: var(--font-d); font-weight: 800;
+      margin-bottom: 0.6rem;
+    }
+    .news-hero-title {
+      font-family: var(--font-d); font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+      font-weight: 300; line-height: 1.05; color: var(--cream); margin-bottom: 1rem;
+    }
+    .news-hero-title em { font-style: italic; color: rgba(247,248,252,0.48); }
+    .news-hero-desc {
+      font-size: 0.88rem; color: rgba(247,248,252,0.6); max-width: 58ch; line-height: 1.9;
+    }
+    .news-hero-pills {
+      display: flex; gap: 0.55rem; margin-top: 1.5rem; flex-wrap: wrap;
+    }
+    .news-hero-pill {
+      display: inline-block; padding: 0.28rem 0.85rem;
+      font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+      font-family: var(--font-d); font-weight: 700; color: rgba(247,248,252,0.65);
+      border: 1px solid rgba(139,131,232,0.28); border-radius: 99px;
+    }
+    @media (max-width: 900px) {
+      .news-hero { height: 280px; }
+      .news-hero-content { padding: 6rem 1.8rem 2.2rem; }
+    }
+    @media (max-width: 560px) { .news-hero { height: 240px; } }
+
+    /* ══════════════════════════════════════
+       2. ILLUSTRATION & COMIC
+    ══════════════════════════════════════ */
+    #section-illus { background: var(--cream); }
+
+    /* Sub-label tabs within section */
+    .sub-section { margin-bottom: 3.5rem; }
+    .sub-section:last-child { margin-bottom: 0; }
+    .sub-label {
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--mid); margin-bottom: 1.2rem; padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Collection slider */
+    .collection-slider-wrap {
+      position: relative;
+    }
+    .collection-slider-track-outer {
+      overflow: hidden; /* hides scroll bar */
+    }
+    .collection-row {
+      display: flex; gap: 1.2rem;
+      padding-bottom: 0.5rem;
+      transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .collection-card {
+      flex: 0 0 280px; cursor: pointer; text-decoration: none;
+    }
+    .collection-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      overflow: hidden; margin-bottom: 0.75rem;
+      background: #e9edf5; border-radius: 10px;
+    }
+    .collection-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .collection-card:hover .collection-thumb img { transform: scale(1.06); }
+    .collection-name {
+      font-family: var(--font-d); font-size: 0.95rem; font-weight: 400;
+      color: var(--ink); line-height: 1.25;
+    }
+    /* Slider arrow buttons */
+    .coll-arrow {
+      position: absolute; top: calc(50% - 18px); transform: translateY(-50%);
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--white); border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 10; font-size: 0.9rem; color: var(--ink);
+      transition: background .2s, border-color .2s, color .2s;
+      user-select: none;
+    }
+    .coll-arrow:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .coll-arrow.coll-prev { left: -18px; }
+    .coll-arrow.coll-next { right: -18px; }
+    .coll-arrow:disabled { opacity: 0.3; pointer-events: none; }
+
+    /* Gallery grid — same as home portfolio */
+    .illus-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+    }
+    .illus-card {
+      cursor: pointer;
+      opacity: 0; transform: translateY(14px);
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    .illus-card.visible { opacity: 1; transform: translateY(0); }
+    .illus-card-img {
+      width: 100%; aspect-ratio: 1/1;
+      overflow: hidden; background: var(--white); margin-bottom: 0;
+    }
+    .illus-card-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.45s ease;
+    }
+    .illus-card:hover .illus-card-img img { transform: scale(1.08); }
+    .illus-card-title {
+      font-family: var(--font-d); font-size: 0.88rem; font-weight: 400;
+      color: var(--ink); line-height: 1.2; margin-bottom: 0.2rem;
+    }
+    .illus-card-meta { font-size: 0.68rem; color: var(--mid); }
+
+    /* ══════════════════════════════════════
+       0. LATEST UPDATES SECTION
+    ══════════════════════════════════════ */
+    #section-updates { background: var(--cream); }
+
+    .load-more-wrap {
+      text-align: center; margin-top: 2.5rem;
+    }
+    .load-more-btn {
+      display: inline-block; padding: 0.75rem 2.5rem;
+      background: transparent; color: var(--ink);
+      font-family: var(--font-d); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      border: 1.5px solid var(--border); cursor: pointer;
+      border-radius: 12px;
+      transition: background .2s, border-color .2s, color .2s;
+    }
+    .load-more-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ══════════════════════════════════════
+       3. STORY
+    ══════════════════════════════════════ */
+    #section-story { background: var(--white); }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .story-card {
+      display: flex; flex-direction: column;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+    .story-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .story-card-img {
+      width: 100%; aspect-ratio: 16/9;
+      overflow: hidden; background: var(--cream); flex-shrink: 0;
+      position: relative;
+    }
+    .story-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+    .story-card:hover .story-card-img img { transform: scale(1.04); }
+    .story-chapter-badge {
+      position: absolute; bottom: 0.7rem; left: 0.7rem;
+      font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase;
+      background: rgba(17,17,17,0.75); color: rgba(247,248,252,0.85);
+      padding: 0.2rem 0.6rem; backdrop-filter: blur(4px);
+    }
+    .story-card-body {
+      padding: 1.4rem; display: flex; flex-direction: column; flex: 1;
+    }
+    .story-type-label {
+      font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .story-title {
+      font-family: var(--font-d); font-size: 1.1rem; font-weight: 400;
+      color: var(--ink); line-height: 1.25; margin-bottom: 0.5rem;
+    }
+    .story-desc {
+      font-size: 0.8rem; color: var(--mid); line-height: 1.7;
+      flex: 1; margin-bottom: 1.2rem;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .story-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1rem; border-top: 1px solid var(--border);
+      gap: 0.8rem; flex-wrap: wrap;
+    }
+    .story-date { font-size: 0.68rem; color: var(--mid); }
+    .story-read-btn {
+      display: inline-block; padding: 0.5rem 1.2rem;
+      background: var(--ink); color: var(--white);
+      font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+      text-decoration: none; transition: background .2s;
+    }
+    .story-read-btn:hover { background: var(--accent); }
+
+    /* ══════════════════════════════════════
+       4. NOVEL
+    ══════════════════════════════════════ */
+    #section-novel { background: var(--cream); }
+
+    .novel-list { display: flex; flex-direction: column; gap: 2px; }
+    .novel-card {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      background: var(--white);
+      overflow: hidden;
+      transition: box-shadow .25s;
+    }
+    .novel-card:hover { box-shadow: 0 8px 32px rgba(233,237,245,0.9); }
+    .novel-thumb {
+      aspect-ratio: 3/4; overflow: hidden; background: var(--cream); flex-shrink: 0;
+    }
+    .novel-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+    .novel-card:hover .novel-thumb img { transform: scale(1.04); }
+    .novel-body {
+      padding: 2.5rem 3rem;
+      display: flex; flex-direction: column; justify-content: center; gap: 0;
+    }
+    .novel-badge {
+      display: inline-block; margin-bottom: 1rem;
+      font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid rgba(139,131,232,0.35);
+      padding: 0.22rem 0.7rem; align-self: flex-start;
+    }
+    .novel-title {
+      font-family: var(--font-d); font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      font-weight: 300; line-height: 1.15; margin-bottom: 0.8rem;
+    }
+    .novel-desc {
+      font-size: 0.88rem; color: var(--mid); line-height: 1.8;
+      max-width: 55ch; margin-bottom: 1.8rem;
+    }
+    .novel-footer {
+      display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+    }
+    .novel-price {
+      font-family: var(--font-d); font-size: 1.5rem; font-weight: 300;
+      color: var(--ink);
+    }
+    .novel-coming {
+      font-size: 0.7rem; color: var(--mid); letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════
+       5. UPCOMING
+    ══════════════════════════════════════ */
+    #section-upcoming {
+      background: var(--ink);
+      padding: 5rem 4rem;
+    }
+    #section-upcoming .section-eyebrow { color: var(--accent); }
+    #section-upcoming .section-heading { color: var(--cream); }
+
+    .upcoming-card {
+      position: relative;
+      margin-top: 2.5rem;
+      overflow: hidden;
+      max-width: 860px;
+      aspect-ratio: 16/7;
+    }
+    .upcoming-gradient {
+      position: absolute; inset: 0;
+    }
+    .upcoming-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(10,10,20,0.82) 0%,
+        rgba(10,10,20,0.25) 45%,
+        transparent 100%
+      );
+    }
+    .upcoming-label {
+      position: absolute; bottom: 2rem; left: 2.2rem;
+      font-family: var(--font-d); font-style: italic;
+      font-size: clamp(1.4rem, 2.5vw, 2.2rem); font-weight: 300;
+      color: rgba(255,255,255,0.92); line-height: 1.15;
+    }
+    .upcoming-label span {
+      display: block; font-family: var(--font-b); font-style: normal;
+      font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.4rem;
+    }
+
+    /* ── GALLERY FOOTER (same as gallery.html) ── */
+    .gallery-footer {
+      padding: 1.5rem 4rem;
+      border-top: 1px solid rgba(139,131,232,0.1);
+      background: var(--ink);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.72rem; color: rgba(247,248,252,0.78);
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .gallery-footer a {
+      color: rgba(247,248,252,0.6); text-decoration: none;
+      letter-spacing: 0.08em; transition: color .2s;
+    }
+    .gallery-footer a:hover { color: var(--cream); }
+    .gallery-footer nav { display: flex; gap: 2rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .illus-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 900px) {
+      nav { padding: 1.1rem 1.5rem; }
+      .news-section, #section-upcoming { padding: 4rem 1.8rem; }
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+      .feature-grid .feature-card:first-child { grid-column: span 2; }
+      .feature-grid .feature-card:first-child .feature-card-img { aspect-ratio: 16/9; }
+      .story-grid { grid-template-columns: 1fr 1fr; }
+      .novel-card { grid-template-columns: 200px 1fr; }
+      .novel-body { padding: 1.8rem 2rem; }
+      .upcoming-card { max-width: 100%; aspect-ratio: 16/8; }
+      .illus-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature-grid .feature-card:first-child { grid-column: span 1; }
+      .story-grid { grid-template-columns: 1fr; }
+      .novel-card { grid-template-columns: 1fr; }
+      .novel-thumb { aspect-ratio: 16/9; }
+      .upcoming-card { aspect-ratio: 4/3; }
+      .illus-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-footer { padding: 1.2rem 1.5rem; }
+    }
+  
+    /* ══ INTERN CAMP DESIGN SYSTEM ══ */
+    @keyframes popIn{from{opacity:0;transform:scale(.88) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+
+    /* Nav redesign */
+    nav { border-radius: 0 0 18px 18px; border-bottom: 2px solid var(--border); background: rgba(255,255,255,0.97); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .nav-logo { font-family: 'Nunito', sans-serif !important; font-weight: 900 !important; letter-spacing: 0.04em !important; font-size: 1.1rem !important; }
+    .nav-links a { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.78rem; border-radius: 10px; padding: 0.35rem 0.8rem; transition: all .2s; }
+    .nav-links a:hover, .nav-links a.active { background: var(--purple); color: #fff !important; }
+
+    /* Heading fonts bold */
+    .section-title, .hero-title, .hero-title-slide, .update-featured-title,
+    .feature-title, .story-title, .platform-name, .intro-title, .stat-num,
+    .port-title, .sub-tier-name, .product-title, .novel-title, .pc-title,
+    .founder-name, h1, h2, h3 {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.01em;
+    }
+    .section-label, .eyebrow, .intro-left .eyebrow, .hero-label,
+    .update-type-badge, .feature-badge, .cat-divider-label {
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.12em;
+    }
+
+    /* Cards — rounded + shadow */
+    .product-card, .sub-card, .update-card, .port-card,
+    .kpi-card, .feat-card, .story-card, .novel-card, .pc-body,
+    .feature-card, .founder-card, .illus-card, .sub-card-media,
+    .social-card, .writing-block {
+      border-radius: var(--card-radius) !important;
+      box-shadow: var(--card-shadow) !important;
+      overflow: hidden;
+    }
+    .update-featured { border-radius: var(--card-radius) !important; overflow: hidden !important; }
+
+    /* Colorful card top borders (cycling green/yellow/pink/purple) */
+    .product-card:nth-child(4n+1), .sub-card:nth-child(4n+1), .port-card:nth-child(4n+1), .illus-card:nth-child(4n+1) { border-top: 3px solid var(--purple) !important; }
+    .product-card:nth-child(4n+2), .sub-card:nth-child(4n+2), .port-card:nth-child(4n+2), .illus-card:nth-child(4n+2) { border-top: 3px solid var(--yellow) !important; }
+    .product-card:nth-child(4n+3), .sub-card:nth-child(4n+3), .port-card:nth-child(4n+3), .illus-card:nth-child(4n+3) { border-top: 3px solid var(--pink) !important; }
+    .product-card:nth-child(4n+4), .sub-card:nth-child(4n+4), .port-card:nth-child(4n+4), .illus-card:nth-child(4n+4) { border-top: 3px solid var(--purple) !important; }
+
+    /* Buttons — pill/rounded */
+    .btn-primary, .product-btn, .sub-btn, .nl-btn, .pc-btn, .story-read-btn,
+    .writing-cta, .hero-explore-btn, .sub-platform-btn, .f-btn.active,
+    .filter-tab.active, .filter-pill.active {
+      border-radius: 12px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+    }
+
+    /* Filter pills/tabs */
+    .filter-tab, .filter-pill, .f-btn {
+      border-radius: 30px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 700 !important;
+    }
+
+    /* Tags */
+    .product-badge, .feature-badge, .update-type-badge, .platform-tag,
+    .story-chapter-badge, .novel-badge, .pc-type {
+      border-radius: 20px !important;
+      font-family: 'Nunito', sans-serif !important;
+      font-weight: 800 !important;
+      padding: 0.25rem 0.8rem !important;
+    }
+
+    /* Colored accent labels */
+    .section-label, .eyebrow { color: var(--purple) !important; }
+    .update-type-badge, .feat-badge, .cat-divider-label, .hero-label { color: var(--purple) !important; border-color: var(--purple) !important; }
+
+    /* Hover lift animation on cards */
+    .product-card:hover, .sub-card:hover, .port-card:hover, .story-card:hover,
+    .social-card:hover, .founder-card:hover, .illus-card:hover {
+      transform: translateY(-5px) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12) !important;
+    }
+
+    /* Section backgrounds */
+    #updates, #shop, .media-section:nth-child(even) { background: var(--white) !important; }
+    #portfolio, .studio-intro, .founders-section { background: var(--cream) !important; }
+
+    /* Social links */
+    .social-link { border-radius: 12px !important; font-family: 'Nunito', sans-serif; font-weight: 700; }
+    .social-link:hover { background: rgba(139,131,232,0.12) !important; border-color: var(--purple) !important; }
+
+    /* Footer tweaks */
+    #site-footer::before { background-image: radial-gradient(circle, rgba(139,131,232,0.12) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    #site-footer::after { border-color: rgba(139,131,232,0.12) !important; }
+    .footer-deco-ring { border-color: rgba(139,131,232,0.08) !important; }
+    .footer-nl-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-brand-col { border-right-color: rgba(139,131,232,0.2) !important; }
+    .footer-nl-col .section-title, .footer-brand-col .section-title { color: #fff !important; }
+
+    /* Gallery overlay accent */
+    .gallery-item .gallery-overlay { background: linear-gradient(to top, rgba(17,17,17,0.9) 0%, rgba(139,131,232,0.12) 100%) !important; }
+    .overlay-expand { background: var(--purple) !important; color: #fff !important; border-radius: 50% !important; }
+
+    /* Update featured body bg */
+    .update-featured-body { background: #111111 !important; }
+
+    /* popIn animation for section cards */
+    .port-card.visible, .product-card, .sub-card, .story-card, .illus-card.visible {
+      animation: popIn 0.45s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    /* Founder cards color accents */
+    .founder-card:nth-child(1) .avatar-placeholder { background: linear-gradient(140deg, #e6f9eb, #8B83E8 80%) !important; }
+    .founder-card:nth-child(2) .avatar-placeholder { background: linear-gradient(140deg, #fff8d6, #FFD246 80%) !important; }
+    .founder-card:nth-child(3) .avatar-placeholder { background: linear-gradient(140deg, #ffe8f3, #FF4F9A 80%) !important; }
+    .founder-card:nth-child(4) .avatar-placeholder { background: linear-gradient(140deg, #eeecfd, #8B83E8 80%) !important; }
+    .avatar-initial { color: rgba(255,255,255,0.8) !important; }
+
+    /* Hero label border update */
+    .hero-label { border-color: var(--purple) !important; }
+
+    /* Page hero dot grid */
+    .page-hero::before { background-image: radial-gradient(circle, rgba(139,131,232,0.15) 1px, transparent 1px), radial-gradient(circle, rgba(139,131,232,0.07) 1px, transparent 1px) !important; }
+    .page-hero::after, .hero-deco-ring { border-color: rgba(139,131,232,0.1) !important; }
+
+    /* Dropdown menus */
+    .dropdown-menu { background: #13131f !important; border-color: rgba(139,131,232,0.2) !important; border-radius: 14px !important; }
+    .dropdown-item:hover, .dropdown-item.active { background: rgba(139,131,232,0.15) !important; }
+    .dropdown-item.active { color: var(--purple) !important; }
+    .dropdown-badge { background: rgba(139,131,232,0.15) !important; }
+
+    /* View all links */
+    .view-all-link, .view-all { color: var(--purple) !important; font-weight: 800; }
+
+    /* Lightbox */
+    .lightbox { background: rgba(10,10,20,0.93) !important; }
+    .lb-title { font-family: 'Nunito', sans-serif !important; font-weight: 800 !important; }
+
+    /* Letter lightbox */
+    .letter-wrap { border-radius: 20px !important; }
+
+    /* Slider arrows */
+    .slider-arrow { border-radius: 12px !important; }
+    .slider-dot.active { background: var(--purple) !important; }
+
+    /* Sub note */
+    .sub-note { border-left-color: var(--purple) !important; border-radius: 0 8px 8px 0 !important; }
+
+    /* Hero explore btn */
+    .hero-explore-btn { border-radius: 12px !important; border-color: rgba(255,255,255,0.6) !important; }
+    .hero-explore-btn:hover { background: var(--purple) !important; border-color: var(--purple) !important; }
+    
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav>
+  <a href="home.html" class="nav-logo">Alpha Centauri</a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="news.html" class="active">News</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="media.html">Media</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════ 1. NEWS HERO ════════════════ -->
+<div class="news-hero" id="newsHero">
+  <canvas id="newsHeroCanvas"></canvas>
+  <div class="news-hero-content">
+    <p class="news-hero-eyebrow">Alpha Centauri · The Studio</p>
+    <h1 class="news-hero-title">The <em>Latest</em> from the Archive</h1>
+    <p class="news-hero-desc">A living record of everything happening at the studio — new illustrations, ongoing comic series, written stories, and upcoming releases. Bookmark this page to stay up to date with every new work added to the archive.</p>
+    <div class="news-hero-pills">
+      <span class="news-hero-pill">Illustrations</span>
+      <span class="news-hero-pill">Comic Series</span>
+      <span class="news-hero-pill">Written Stories</span>
+      <span class="news-hero-pill">Releases</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ LATEST UPDATES ════════════════ -->
+<section id="section-updates" class="news-section">
+  <div class="section-header-row">
+    <div>
+      <p class="section-eyebrow">Latest Updates</p>
+      <h2 class="section-heading">What's <em>New</em></h2>
+      <p class="section-sub">The most recent additions to the archive — new illustrations, chapters, and releases.</p>
+    </div>
+  </div>
+  <div class="story-grid" id="updatesGrid">
+    <p style="color:var(--mid);font-style:italic;grid-column:1/-1;padding:2rem 0;">Loading latest updates…</p>
+  </div>
+  <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+    <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreUpdates()">Load More</button>
+  </div>
+</section>
+
+<!-- ════════════════ 2. ILLUSTRATION & COMIC ════════════════ -->
+<section id="section-illus" class="news-section">
+  <div class="section-header-row">
+    <div>
+      <p class="section-eyebrow">Illustration &amp; Comic</p>
+      <h2 class="section-heading">Artworks &amp; <em>Series</em></h2>
+    </div>
+    <a href="gallery.html" class="view-all-btn">View All Gallery &#x2192;</a>
+  </div>
+
+  <!-- Gallery grid -->
+  <div class="sub-section">
+    <p class="sub-label">Gallery</p>
+    <div class="illus-grid" id="illusGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- Collections -->
+  <div class="sub-section">
+    <p class="sub-label">Collections</p>
+    <div class="collection-slider-wrap">
+      <button class="coll-arrow coll-prev" id="collPrev" onclick="slideCollection(-1)">&#8592;</button>
+      <div class="collection-slider-track-outer">
+        <div class="collection-row" id="collectionRow">
+          <!-- populated by JS from Wix CMS -->
+        </div>
+      </div>
+      <button class="coll-arrow coll-next" id="collNext" onclick="slideCollection(1)">&#8594;</button>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ 3. STORY ════════════════ -->
+<section id="section-story" class="news-section">
+  <div class="section-header-row">
+    <div>
+      <p class="section-eyebrow">Story</p>
+      <h2 class="section-heading">Written <em>Narratives</em></h2>
+      <p class="section-sub">Original fiction and serialised stories from the studio archive.</p>
+    </div>
+  </div>
+  <div class="story-grid" id="storyGrid">
+    <p style="color:var(--mid);font-style:italic;grid-column:1/-1;padding:2rem 0;">Loading narratives…</p>
+  </div>
+  <div class="load-more-wrap" id="storyLoadMoreWrap" style="display:none;">
+    <button class="load-more-btn" onclick="loadMoreStory()">Load More</button>
+  </div>
+</section>
+
+<!-- ════════════════ 4. NOVEL ════════════════ -->
+<section id="section-novel" class="news-section">
+  <div class="section-header-row">
+    <div>
+      <p class="section-eyebrow">Novel</p>
+      <h2 class="section-heading">Digital <em>Publications</em></h2>
+    </div>
+    <a href="home.html#shop" class="view-all-btn">View Shop &#x2192;</a>
+  </div>
+  <div class="novel-list" id="novelList">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ════════════════ 5. UPCOMING ════════════════ -->
+<section id="section-upcoming">
+  <p class="section-eyebrow">What's Next</p>
+  <h2 class="section-heading">Upcoming <em>Next Month</em></h2>
+  <div class="upcoming-card" id="upcomingCard">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER (same as Gallery) ════════════════ -->
+<footer class="gallery-footer">
+  <span>&#169; 2026 Alpha Centauri. All rights reserved.</span>
+</footer>
+
+<script>
+// ══════════════════════════════════════
+// CONFIG — Google Sheets CSV sources
+// ══════════════════════════════════════
+var CSV_UPDATES    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvmVs-2dnWpeTbIKl7jD04aKgFHp12CIMxYHeDbcAXJf2Tou8mipPZ6dTp81sMHgTx4UsHWdyTMNmx/pub?gid=102060002&single=true&output=csv';
+var CSV_STORY      = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPhQlCrjsWV8OVMAf5hZqUC6PevG4ulcDiVnF3XSbjQ3bHf3MhITvIdKxREjDDSjTRWbjmUVKo6Zlh/pub?output=csv';
+var CSV_COLLECTION = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjS_TWHEIZx4I5vWwbSjydd0GJfd4tz-02wONISVUFjbLnCuMkGE6_X6Y409yPlhyUjWREV1FdiEKV/pub?output=csv';
+var CSV_GALLERY    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRgCi2XIJL5CXrGxYskzlr47t0u6pLpuvfpIwoZmgQuEoNOKoCVw00dpFh6KIZwX_W3cGhXR_IN-f5N/pub?gid=0&single=true&output=csv';
+
+// ══════════════════════════════════════
+// CSV PARSER (handles quoted fields, CRLF)
+// ══════════════════════════════════════
+function parseCSV(text) {
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  var lines = [], cur = '', inQ = false;
+  for (var i = 0; i < text.length; i++) {
+    var ch = text[i];
+    if (ch === '"') {
+      if (inQ && text[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (ch === '\n' && !inQ) { lines.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  if (cur) lines.push(cur);
+  if (lines.length < 2) return [];
+  var headers = splitCSV(lines[0]);
+  // Log headers once per sheet so column names are visible in DevTools console
+  console.log('[CSV headers]', headers);
+  var out = [];
+  for (var r = 1; r < lines.length; r++) {
+    if (!lines[r].trim()) continue;
+    var vals = splitCSV(lines[r]);
+    var obj = {};
+    headers.forEach(function(h, i) { obj[h.trim().toLowerCase()] = (vals[i] || '').trim(); });
+    out.push(obj);
+  }
+  return out;
+}
+
+function splitCSV(line) {
+  var cols = [], cur = '', inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    var c = line[i];
+    if (c === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) { cols.push(cur); cur = ''; }
+    else cur += c;
+  }
+  cols.push(cur);
+  return cols;
+}
+
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
+
+// Resolve any image value from the sheet:
+//   - direct https:// URL  → used as-is
+//   - wix:image://v1/...   → converted to CDN URL
+function resolveImg(raw, w, h) {
+  w = w || 800; h = h || 450;
+  if (!raw || typeof raw !== 'string' || !raw.trim()) return '';
+  var s = raw.trim();
+  if (s.indexOf('https://') === 0 || s.indexOf('http://') === 0) return s;
+  var m = s.match(/wix:image:\/\/v1\/([^/]+)\/([^#?\s]+)/);
+  if (!m) return '';
+  return 'https://static.wixstatic.com/media/' + m[1]
+       + '/v1/fill/w_' + w + ',h_' + h
+       + ',al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/' + m[2];
+}
+
+// Pick a field from a row object, trying multiple lowercase key variants
+function pick(row, keys) {
+  for (var i = 0; i < keys.length; i++) {
+    var v = row[keys[i].toLowerCase()];
+    if (v !== undefined && v !== '') return v;
+  }
+  return '';
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  var dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+}
+
+// ══════════════════════════════════════
+// HERO CANVAS ANIMATION
+// ══════════════════════════════════════
+(function() {
+  var canvas = document.getElementById('newsHeroCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H, particles = [], inkStrokes = [], lines = [], raf;
+  var PALETTE = ['rgba(139,131,232,','rgba(255,210,70,','rgba(255,79,154,','rgba(168,158,240,'];
+  function rand(a,b){ return a + Math.random()*(b-a); }
+  function pick2(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function initScene() {
+    particles = []; inkStrokes = [];
+    for (var i = 0; i < 85; i++) {
+      particles.push({ x:rand(0,W), y:rand(0,H), r:rand(0.5,2.4),
+        vx:rand(-0.16,0.16), vy:rand(-0.22,-0.04),
+        alpha:rand(0.07,0.42), col:pick2(PALETTE),
+        pulse:rand(0,Math.PI*2), pulseSpeed:rand(0.007,0.02) });
+    }
+    for (var s = 0; s < 8; s++) {
+      var sx=rand(W*.05,W*.9), sy=rand(H*.1,H*.9), len=rand(60,200), ang=rand(-0.5,0.5);
+      inkStrokes.push({ x1:sx,y1:sy, cx:sx+rand(-90,90),cy:sy+rand(-70,70),
+        x2:sx+Math.cos(ang)*len, y2:sy+Math.sin(ang)*len,
+        col:pick2(PALETTE), alpha:rand(0.02,0.07), width:rand(1.5,5.5) });
+    }
+    lines = [];
+    for (var a = 0; a < particles.length; a++) {
+      for (var b = a+1; b < particles.length; b++) {
+        var dx=particles[a].x-particles[b].x, dy=particles[a].y-particles[b].y;
+        if (Math.sqrt(dx*dx+dy*dy)<90 && Math.random()<0.22) lines.push({a:a,b:b});
+      }
+    }
+  }
+
+  function drawFrame() {
+    ctx.clearRect(0,0,W,H);
+    var g1=ctx.createRadialGradient(W*.22,H*.5,0,W*.22,H*.5,W*.55);
+    g1.addColorStop(0,'rgba(139,131,232,0.07)'); g1.addColorStop(0.5,'rgba(255,79,154,0.03)'); g1.addColorStop(1,'transparent');
+    ctx.fillStyle=g1; ctx.fillRect(0,0,W,H);
+    var g2=ctx.createRadialGradient(W*.82,H*.3,0,W*.82,H*.3,W*.38);
+    g2.addColorStop(0,'rgba(255,210,70,0.045)'); g2.addColorStop(1,'transparent');
+    ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+    inkStrokes.forEach(function(s){
+      ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.quadraticCurveTo(s.cx,s.cy,s.x2,s.y2);
+      ctx.strokeStyle=s.col+s.alpha+')'; ctx.lineWidth=s.width; ctx.lineCap='round'; ctx.stroke();
+    });
+    lines.forEach(function(ln){
+      var pa=particles[ln.a],pb=particles[ln.b];
+      var dx=pa.x-pb.x,dy=pa.y-pb.y,dist=Math.sqrt(dx*dx+dy*dy);
+      var a=Math.max(0,(90-dist)/90)*0.055;
+      ctx.beginPath(); ctx.moveTo(pa.x,pa.y); ctx.lineTo(pb.x,pb.y);
+      ctx.strokeStyle='rgba(139,131,232,'+a+')'; ctx.lineWidth=0.55; ctx.stroke();
+    });
+    particles.forEach(function(p){
+      p.pulse+=p.pulseSpeed; var pulse=Math.sin(p.pulse)*0.38+0.62;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*pulse,0,Math.PI*2);
+      ctx.fillStyle=p.col+(p.alpha*pulse)+')'; ctx.fill();
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.y<-5)p.y=H+5; if(p.x<-5)p.x=W+5; if(p.x>W+5)p.x=-5;
+    });
+    raf=requestAnimationFrame(drawFrame);
+  }
+
+  function resize(){
+    var rect=canvas.parentElement.getBoundingClientRect();
+    W=canvas.width=rect.width; H=canvas.height=rect.height;
+    initScene();
+  }
+  resize();
+  window.addEventListener('resize',function(){ cancelAnimationFrame(raf); resize(); drawFrame(); });
+  drawFrame();
+})();
+
+// ══════════════════════════════════════
+// 1. ILLUSTRATION GRID — latest 6 from Gallery sheet
+// ══════════════════════════════════════
+function buildIllusGrid(items) {
+  var grid = document.getElementById('illusGrid');
+  grid.innerHTML = '';
+  if (!items || items.length === 0) {
+    grid.innerHTML = '<p style="color:var(--mid);font-style:italic;grid-column:1/-1">No artworks yet.</p>';
+    return;
+  }
+  items.forEach(function(item, i) {
+    var card = document.createElement('div');
+    card.className = 'illus-card';
+    card.style.transitionDelay = (i * 0.06) + 's';
+    card.innerHTML = '<a href="gallery.html" style="text-decoration:none;"><div class="illus-card-img"><img src="' + item.thumb + '" alt="' + item.title + '" loading="lazy" /></div></a>';
+    grid.appendChild(card);
+  });
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  grid.querySelectorAll('.illus-card').forEach(function(c) { obs.observe(c); });
+}
+
+fetch(CSV_GALLERY)
+  .then(function(r) { return r.text(); })
+  .then(function(text) {
+    var rows = parseCSV(text);
+    var items = rows
+      .filter(function(r) { return (r.is_public || '').toUpperCase() === 'TRUE'; })
+      .sort(function(a, b) {
+        return new Date(b.modified_date || b.created_date || 0) - new Date(a.modified_date || a.created_date || 0);
+      })
+      .slice(0, 6)
+      .map(function(r) {
+        return {
+          title: r.file_name || r.title || '',
+          thumb: 'https://drive.google.com/thumbnail?id=' + r.file_id + '&sz=w600'
+        };
+      });
+    buildIllusGrid(items);
+  })
+  .catch(function(err) { console.error('Gallery CSV error:', err); buildIllusGrid([]); });
+
+// ══════════════════════════════════════
+// 2. COLLECTION SLIDER — from Collection CSV
+// ══════════════════════════════════════
+var collSlideIndex = 0;
+var COLL_CARD_W = 280 + 19; // card width + gap — must match CSS
+
+function slideCollection(dir) {
+  var row = document.getElementById('collectionRow');
+  if (!row) return;
+  var cards = row.querySelectorAll('.collection-card');
+  var outer = row.parentElement;
+  var visibleW = outer.offsetWidth;
+  var maxSlide = Math.max(0, cards.length * COLL_CARD_W - visibleW);
+  collSlideIndex = Math.max(0, Math.min(collSlideIndex + dir * (COLL_CARD_W * 2), maxSlide));
+  row.style.transform = 'translateX(-' + collSlideIndex + 'px)';
+  document.getElementById('collPrev').disabled = collSlideIndex <= 0;
+  document.getElementById('collNext').disabled = collSlideIndex >= maxSlide;
+}
+
+function buildCollectionCards(rows) {
+  var row = document.getElementById('collectionRow');
+  row.innerHTML = '';
+  if (!rows || rows.length === 0) {
+    row.innerHTML = '<p style="color:var(--mid);font-style:italic;">No collections found.</p>';
+    return;
+  }
+
+  rows.forEach(function(c) {
+    // Try every plausible column name for title and image
+    var title  = pick(c, ['title','name','collection','collection name','collectionname']) || 'Untitled';
+    var rawImg = pick(c, ['image','thumbnail','cover','cover image','coverimage','img','photo','picture','url','image url','image_url','img_url','thumbnail_url','cover_url']);
+    var imgSrc = resolveImg(rawImg, 560, 315);
+    var fallback = 'linear-gradient(160deg,#0a0a14,#2a1845,#8B83E8)';
+
+    var a = document.createElement('a');
+    a.className = 'collection-card';
+    a.href = 'gallery.html';
+    a.innerHTML =
+      '<div class="collection-thumb">' +
+        '<div style="width:100%;height:100%;background:' + fallback + ';position:relative;">' +
+          (imgSrc
+            ? '<img src="' + imgSrc + '" alt="' + title + '" loading="lazy"'
+            + ' style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"'
+            + ' onerror="this.style.display=\'none\'" />'
+            : '') +
+        '</div>' +
+      '</div>' +
+      '<p class="collection-name">' + title + '</p>';
+    row.appendChild(a);
+  });
+
+  document.getElementById('collPrev').disabled = true;
+  var outer = row.parentElement;
+  var maxSlide = Math.max(0, rows.length * COLL_CARD_W - outer.offsetWidth);
+  document.getElementById('collNext').disabled = maxSlide <= 0;
+}
+
+fetch(CSV_COLLECTION)
+  .then(function(r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then(function(text) {
+    var rows = parseCSV(text);
+    if (!rows.length) throw new Error('empty');
+    buildCollectionCards(rows);
+  })
+  .catch(function(err) {
+    console.error('Collection CSV error:', err);
+    buildCollectionCards([]);
+  });
+
+// ══════════════════════════════════════
+// LATEST UPDATES — from Updates CSV → #updatesGrid
+// ══════════════════════════════════════
+var _allUpdateRows = [];
+var _shownUpdates  = 0;
+var UPDATES_PAGE   = 6;
+
+function buildUpdateCard(item) {
+  var title   = pick(item, ['title','name','update title','update_title']) || 'Untitled';
+  var desc    = pick(item, ['description','desc','content','body','excerpt','summary']);
+  var type    = pick(item, ['type','category','update type','update_type','kind']) || 'Update';
+  var col     = pick(item, ['collection','series','fandom','source','franchise']);
+  var chapter = pick(item, ['chapter','chapter number','chapter_number','chapterno','ep','episode']);
+  var date    = pick(item, ['date','created_date','created date','published','publish date','publish_date','_createddate','updated_date']);
+  var url     = pick(item, ['url','link','read url','read_url','substack_url','post_url','href','story url','story_url','read link','read_link','source url','source_url']) || '#';
+  var rawImg  = pick(item, ['image','thumbnail','cover','img','photo','image url','image_url','img_url','thumbnail_url','cover_url','picture','media']);
+  var imgSrc  = resolveImg(rawImg, 640, 360);
+  var gradient = pick(item, ['gradient','color','colour','bg']) || 'linear-gradient(160deg,#0E1A2A,#2A4A6E,#4A7EAE)';
+
+  var card = document.createElement('div');
+  card.className = 'story-card';
+  card.innerHTML =
+    '<div class="story-card-img">' +
+      '<div style="width:100%;height:100%;background:' + gradient + ';position:relative;">' +
+        (imgSrc
+          ? '<img src="' + imgSrc + '" alt="' + title + '" loading="lazy"'
+          + ' style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"'
+          + ' onerror="this.style.display=\'none\'" />'
+          : '') +
+      '</div>' +
+      (chapter ? '<span class="story-chapter-badge">' + chapter + '</span>' : '') +
+    '</div>' +
+    '<div class="story-card-body">' +
+      '<p class="story-type-label">' + type + (col ? ' &middot; ' + col : '') + '</p>' +
+      '<p class="story-title">' + title + '</p>' +
+      (desc ? '<p class="story-desc">' + desc + '</p>' : '') +
+      '<div class="story-footer">' +
+        '<span class="story-date">' + fmtDate(date) + '</span>' +
+      '</div>' +
+    '</div>';
+  return card;
+}
+
+function renderUpdates(start, count) {
+  var grid = document.getElementById('updatesGrid');
+  var slice = _allUpdateRows.slice(start, start + count);
+  slice.forEach(function(item) {
+    grid.appendChild(buildUpdateCard(item));
+  });
+  _shownUpdates += slice.length;
+  var wrap = document.getElementById('loadMoreWrap');
+  if (_shownUpdates >= _allUpdateRows.length) {
+    wrap.style.display = 'none';
+  } else {
+    wrap.style.display = 'block';
+  }
+}
+
+function loadMoreUpdates() {
+  renderUpdates(_shownUpdates, UPDATES_PAGE);
+}
+
+function initUpdatesSection(rows) {
+  var grid = document.getElementById('updatesGrid');
+  grid.innerHTML = '';
+  if (!rows || rows.length === 0) {
+    grid.innerHTML = '<p style="color:var(--mid);font-style:italic;grid-column:1/-1">No updates yet.</p>';
+    return;
+  }
+  _allUpdateRows = rows;
+  _shownUpdates  = 0;
+  renderUpdates(0, UPDATES_PAGE);
+}
+
+fetch(CSV_UPDATES)
+  .then(function(r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then(function(text) {
+    var rows = parseCSV(text);
+    if (!rows.length) throw new Error('empty');
+    rows.sort(function(a, b) {
+      var da = pick(a, ['date','created_date','published','publish date']);
+      var db = pick(b, ['date','created_date','published','publish date']);
+      return new Date(db || 0) - new Date(da || 0);
+    });
+    initUpdatesSection(rows);
+  })
+  .catch(function(err) {
+    console.error('Updates CSV error:', err);
+    initUpdatesSection([]);
+  });
+
+// ══════════════════════════════════════
+// 3. STORY NARRATIVES — from Story CSV → #storyGrid
+// ══════════════════════════════════════
+var _allStoryRows = [];
+var _shownStory   = 0;
+var STORY_PAGE    = 6;
+
+document.getElementById('storyGrid').innerHTML =
+  '<p style="color:var(--mid);font-style:italic;grid-column:1/-1;padding:2rem 0;">Loading narratives…</p>';
+
+function renderStory(start, count) {
+  var grid = document.getElementById('storyGrid');
+  var slice = _allStoryRows.slice(start, start + count);
+  slice.forEach(function(item) {
+    grid.appendChild(buildUpdateCard(item));
+  });
+  _shownStory += slice.length;
+  var wrap = document.getElementById('storyLoadMoreWrap');
+  if (_shownStory >= _allStoryRows.length) {
+    wrap.style.display = 'none';
+  } else {
+    wrap.style.display = 'block';
+  }
+}
+
+function loadMoreStory() {
+  renderStory(_shownStory, STORY_PAGE);
+}
+
+function initStorySection(rows) {
+  var grid = document.getElementById('storyGrid');
+  grid.innerHTML = '';
+  if (!rows || rows.length === 0) {
+    grid.innerHTML = '<p style="color:var(--mid);font-style:italic;grid-column:1/-1">No narratives yet.</p>';
+    return;
+  }
+  _allStoryRows = rows;
+  _shownStory   = 0;
+  renderStory(0, STORY_PAGE);
+}
+
+fetch(CSV_STORY)
+  .then(function(r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then(function(text) {
+    var rows = parseCSV(text);
+    if (!rows.length) throw new Error('empty');
+    rows.sort(function(a, b) {
+      var da = pick(a, ['date','created_date','published','publish date']);
+      var db = pick(b, ['date','created_date','published','publish date']);
+      return new Date(db || 0) - new Date(da || 0);
+    });
+    initStorySection(rows);
+  })
+  .catch(function(err) {
+    console.error('Story CSV error:', err);
+    initStorySection([]);
+  });
+
+// ══════════════════════════════════════
+// 4. NOVEL / DIGITAL PRODUCTS (static)
+// ══════════════════════════════════════
+var NOVELS = [
+  { badge:'Digital Download', title:'Spanking Art Collection Vol. 1',
+    desc:'High-resolution digital art pack featuring selected standalone paintings. Full-size PNG files, print-ready quality, with variant versions included.',
+    price:'$12', url:'https://www.patreon.com/starila',
+    gradient:'linear-gradient(160deg,#E8D5C4,#C4956A,#8B5A2B)', btnLabel:'Get Now' },
+  { badge:'Digital Download', title:'School Corporal Punishment — Full Series',
+    desc:'The complete SCP comic series in digital format. All chapters in high resolution, with alternative variant pages included.',
+    price:'$20', url:'https://www.patreon.com/starila',
+    gradient:'linear-gradient(175deg,#E2D5C8,#B8936A,#7A5538)', btnLabel:'Get Now' },
+  { badge:'Coming Soon', title:'Digital Novel — Vol. 1',
+    desc:'Original written fiction set in the Spankingland universe. Rich narrative, detailed characters, and exclusive illustrated cover art.',
+    price:'TBA', url:null, gradient:'linear-gradient(140deg,#D8C8D4,#A87898,#6A4060)', btnLabel:null }
+];
+
+(function buildNovels() {
+  var list = document.getElementById('novelList');
+  NOVELS.forEach(function(n) {
+    var card = document.createElement('div');
+    card.className = 'novel-card';
+    card.innerHTML =
+      '<div class="novel-thumb"><div style="width:100%;height:100%;background:' + n.gradient + ';"></div></div>' +
+      '<div class="novel-body">' +
+        '<span class="novel-badge">' + n.badge + '</span>' +
+        '<p class="novel-title">' + n.title + '</p>' +
+        '<p class="novel-desc">' + n.desc + '</p>' +
+        '<div class="novel-footer">' +
+          '<span class="novel-price">' + n.price + '</span>' +
+          (n.btnLabel && n.url
+            ? '<a href="' + n.url + '" target="_blank" class="btn-primary">' + n.btnLabel + '</a>'
+            : '<span class="novel-coming">&#x23F3; In Development</span>') +
+          '<a href="home.html#shop" class="btn-outline">View Shop</a>' +
+        '</div>' +
+      '</div>';
+    list.appendChild(card);
+  });
+})();
+
+// ══════════════════════════════════════
+// 5. UPCOMING — auto-generate next month
+// ══════════════════════════════════════
+(function buildUpcoming() {
+  var now = new Date(), next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  var monthName = next.toLocaleDateString('en-US', { month: 'long' });
+  var yearNum   = next.getFullYear();
+  var gradients = [
+    'linear-gradient(145deg,#1A0E2A 0%,#3A1855 40%,#6A3890 70%,#9A68C0 100%)',
+    'linear-gradient(145deg,#0E1A2A 0%,#1A3A5E 40%,#2A6498 70%,#5A94C8 100%)',
+    'linear-gradient(145deg,#0A1A0E 0%,#1A4A22 40%,#2A7A38 70%,#5AAA68 100%)',
+    'linear-gradient(145deg,#2A1A0A 0%,#5E3A18 40%,#9A6428 70%,#CAA458 100%)',
+    'linear-gradient(145deg,#1A0A0A 0%,#5A1818 40%,#9A3028 70%,#CA6858 100%)',
+    'linear-gradient(145deg,#1A180A 0%,#4A4010 40%,#8A7820 70%,#C0A840 100%)',
+    'linear-gradient(145deg,#0A1818 0%,#104040 40%,#187878 70%,#38B8B8 100%)',
+    'linear-gradient(145deg,#1A100A 0%,#4A2810 40%,#8A5020 70%,#C09040 100%)',
+    'linear-gradient(145deg,#100A1A 0%,#28184A 40%,#482888 70%,#7860B8 100%)',
+    'linear-gradient(145deg,#1A0A0E 0%,#4A181E 40%,#8A3038 70%,#B86870 100%)',
+    'linear-gradient(145deg,#0A0E18 0%,#141E38 40%,#203468 70%,#486098 100%)',
+    'linear-gradient(145deg,#0E1410 0%,#1E2E20 40%,#346040 70%,#60A870 100%)'
+  ];
+  var grad = gradients[next.getMonth()];
+  var card = document.getElementById('upcomingCard');
+  card.innerHTML =
+    '<div class="upcoming-gradient" style="background:' + grad + ';"></div>' +
+    '<div class="upcoming-overlay"></div>' +
+    '<div class="upcoming-label"><span>What\'s Next</span>Coming in ' + monthName + ' ' + yearNum + '</div>';
+})();
+</script>
+</body>
+</html>
